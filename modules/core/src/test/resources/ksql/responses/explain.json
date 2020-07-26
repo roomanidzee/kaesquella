@@ -1,0 +1,23 @@
+{
+    "statementText": "*statement_text*",
+    "queryDescription": {
+        "statementText": "*statement_text*",
+        "fields": [
+            {
+                "name": "test",
+                "schema": {
+                    "type": "STRING",
+                    "memberSchema": null,
+                    "fields": null
+                }
+            }
+        ],
+        "sources": ["test", "test"],
+        "sinks": ["test", "test"],
+        "executionPlan": "test",
+        "topology": "test"
+    },
+    "overridenProperties": {
+        "test": "test"
+    }
+}
