@@ -16,7 +16,7 @@ lazy val kaesquella = (project in file("."))
       ),
     scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8"),
     testOptions in Test ++= Seq(
-        Tests.Argument(TestFrameworks.ScalaTest, "-o"),
+        Tests.Argument(TestFrameworks.ScalaTest, "-oT"),
         Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports")
       ),
     scalafmtOnCompile := true,
@@ -30,6 +30,7 @@ lazy val core = (project in file("modules/core"))
     version := projectVersion,
     scalaVersion := scalaProjectVersion,
     testOptions in Test ++= Seq(
+        Tests.Argument(TestFrameworks.ScalaTest, "-oT"),
         Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports")
       ),
     scalafmtOnCompile := true,
