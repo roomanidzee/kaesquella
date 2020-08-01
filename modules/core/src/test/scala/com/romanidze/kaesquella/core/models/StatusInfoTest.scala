@@ -27,7 +27,7 @@ class StatusInfoTest extends AnyWordSpec with Matchers with EitherValues {
 
     }
 
-    "decode to json" in {
+    "decode from json" in {
 
       val fileData: BufferedSource = Source.fromResource("status.json")
       val fileString: String = fileData.mkString

@@ -29,7 +29,7 @@ class VersionInfoTest extends AnyWordSpec with Matchers with EitherValues {
 
     }
 
-    "decode to json" in {
+    "decode from json" in {
 
       val fileData: BufferedSource = Source.fromResource("version_info.json")
       val fileString: String = fileData.mkString
