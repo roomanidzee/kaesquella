@@ -33,8 +33,11 @@ jobs:
         path: /home/runner/work/kaesquella/kaesquella/target/
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
 
-    - name: Run sonar scanning
+    - name: Clear SonarQube 
+      run: rm -rf ~/.sonar && rm -rf ~/.scannerwork
+
+    - name: Run SonarQube scanning
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: rm -rf ~/.sonar && rm -rf ~/.scannerwork && sbt -Dsonar.login=$SONAR_TOKEN sonarScan    
+      run: sbt -Dsonar.login=$SONAR_TOKEN sonarScan    
