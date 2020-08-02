@@ -21,13 +21,20 @@ jobs:
       with:
         java-version: 11.0.7
 
-    - name: Run tests
-      run: sbt test
+    - name: Run tests and coverage
+      run: |
+        sbt clean coverage test
+        sbt coverageReport
+        sbt coverageAggregate
+
+    - name: Cache coverage file
+      uses: actions/cache@v2
+      with:
+        path: /home/runner/work/kaesquella/kaesquella/target/
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
 
     - name: Run sonar scanning
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        sbt clean coverage test
-        sbt -Dsonar.login=$SONAR_TOKEN coverageAggregate sonarScan    
+      run: sbt -Dsonar.login=$SONAR_TOKEN sonarScan    
