@@ -13,7 +13,8 @@ object Dependencies {
   private val tethys: Seq[ModuleID] = Seq(
     "com.tethys-json" %% "tethys-core" % Versions.tethys,
     "com.tethys-json" %% "tethys-jackson" % Versions.tethys,
-    "com.tethys-json" %% "tethys-derivation" % Versions.tethys
+    "com.tethys-json" %% "tethys-derivation" % Versions.tethys,
+    "com.tethys-json" %% "tethys-json4s" % Versions.tethys
   )
 
   val coreDeps : Seq[ModuleID] = tethys
