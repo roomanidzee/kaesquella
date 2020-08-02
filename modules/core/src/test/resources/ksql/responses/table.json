@@ -1,0 +1,10 @@
+{
+    "statementText": "LIST TABLES",
+    "tables": [
+        {
+            "name": "test_table",
+            "topic": "test_topic",
+            "format": "JSON"
+        }
+    ]
+}
