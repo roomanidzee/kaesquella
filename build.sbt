@@ -20,7 +20,8 @@ lazy val kaesquella = (project in file("."))
         Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports")
       ),
     scalafmtOnCompile := true,
-    assemblyJarName in assembly := s"kaesquella-${version.value}.jar"
+    assemblyJarName in assembly := s"kaesquella-${version.value}.jar",
+    sonarProperties := Sonar.properties
   )
   .aggregate(core)
 
@@ -34,5 +35,6 @@ lazy val core = (project in file("modules/core"))
         Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports")
       ),
     scalafmtOnCompile := true,
-    libraryDependencies ++= Dependencies.coreDeps ++ Dependencies.testDeps
+    libraryDependencies ++= Dependencies.coreDeps ++ Dependencies.testDeps,
+    sonarProperties := Sonar.properties
   )

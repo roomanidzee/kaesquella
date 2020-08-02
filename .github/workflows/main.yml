@@ -21,5 +21,13 @@ jobs:
       with:
         java-version: 11.0.7
 
-    - name: Run tests
-      run: sbt test
+    - name: Run coverage and tests
+      run: |
+        sbt clean coverage test
+        sbt coverageAggregate
+
+    - name: Run sonar scanning
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: sbt -Dsonar.login=$SONAR_TOKEN sonarScan    
