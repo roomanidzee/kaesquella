@@ -5,6 +5,16 @@ import tethys.jackson._
 
 import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
 
+/**
+ * Class for representing execution result for such queries, like `CREATE`, `DROP`, `TERMINATE`
+ *
+ * @param statement ksql statement
+ * @param commandID command, which was created by statement (ID for status retrieve)
+ * @param status result of statement
+ *
+ * @author Andrey Romanov
+ * @since 0.0.1
+ */
 case class DDLInfo(statement: String, commandID: String, status: CommandStatus) extends KSQLResponse
 
 object DDLInfo {

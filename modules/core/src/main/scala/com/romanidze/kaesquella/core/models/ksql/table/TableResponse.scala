@@ -5,6 +5,15 @@ import tethys.jackson._
 
 import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
 
+/**
+ * Class for representing `LIST TABLES` and `SHOW TABLES` results
+ *
+ * @param statement source statment
+ * @param tables sequence of tables
+ *
+ * @author Andrey Romanov
+ * @since 0.0.1
+ */
 case class TableResponse(statement: String, tables: Seq[TableInfo]) extends KSQLResponse
 
 object TableResponse {

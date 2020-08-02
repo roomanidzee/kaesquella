@@ -4,6 +4,15 @@ import tethys._
 import tethys.jackson._
 import tethys.derivation.semiauto._
 
+/**
+ * Class for representing an error instance from KSQL Server
+ *
+ * @param errorCode error code from KSQL server
+ * @param message error message from KSQL server
+ *
+ * @author Andrey Romanov
+ * @since 0.0.1
+ */
 case class ExecutionError(errorCode: String, message: String)
 
 object ExecutionError {
@@ -20,7 +29,16 @@ object ExecutionError {
 
 }
 
-case class ClientError(message: String, description: String)
+/**
+ * Case class for client error (by many backends)
+ *
+ * @param message error message
+ * @param description error description
+ * @param traceback error traceback
+ * @author Andrey Romanov
+ * @since 0.0.1
+ */
+case class ClientError(message: String, description: String, traceback: String)
 
 object ClientError {
 

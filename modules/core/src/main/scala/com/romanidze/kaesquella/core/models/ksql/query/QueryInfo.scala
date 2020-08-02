@@ -3,6 +3,16 @@ package com.romanidze.kaesquella.core.models.ksql.query
 import tethys._
 import tethys.jackson._
 
+/**
+ * Class for information about retrieved queries
+ *
+ * @param query statement, which started the query
+ * @param sinks streams and tables for query results
+ * @param id query ID
+ *
+ * @author Andrey Romanov
+ * @since 0.0.1
+ */
 case class QueryInfo(query: String, sinks: String, id: String)
 
 object QueryInfo {

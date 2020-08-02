@@ -5,6 +5,15 @@ import tethys.jackson._
 
 import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
 
+/**
+ * Class for representing `LIST STREAMS` and `SHOW STREAMS` results
+ *
+ * @param statement source statement
+ * @param streams sequence of streams
+ *
+ * @author Andrey Romanov
+ * @since 0.0.1
+ */
 case class StreamResponse(statement: String, streams: Seq[StreamInfo]) extends KSQLResponse
 
 object StreamResponse {

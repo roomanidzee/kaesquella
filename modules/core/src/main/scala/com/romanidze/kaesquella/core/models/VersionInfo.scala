@@ -3,6 +3,16 @@ package com.romanidze.kaesquella.core.models
 import tethys._
 import tethys.jackson._
 
+/**
+ * Information about KSQL server, which was retrieved by REST Call
+ *
+ * @param version server version
+ * @param clusterID KSQL cluster ID
+ * @param serviceID KSQL service ID
+ *
+ * @author Andrey Romanov
+ * @since 0.0.1
+ */
 case class VersionInfo(version: String, clusterID: String, serviceID: String)
 
 object VersionInfo {
@@ -21,6 +31,14 @@ object VersionInfo {
 
 }
 
+/**
+ * Class for incapsulating most server information
+ *
+ * @param info information about KSQL server
+ *
+ * @author Andrey Romanov
+ * @since 0.0.1
+ */
 case class KSQLVersionResponse(info: VersionInfo)
 
 object KSQLVersionResponse {
