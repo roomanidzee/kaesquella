@@ -10,10 +10,6 @@ object Sonar {
 
     "sonar.modules" -> "modules/core",
 
-    "modules/core.sonar.projectName" -> "kaesquella-core",
-    "modules/core.sonar.sources" -> "modules/core/src/main/scala",
-    "modules/core.sonar.tests" -> "modules/core/src/test/scala",
-
     "sonar.sourceEncoding" -> "UTF-8",
     "sonar.scala.scoverage.reportPath" -> "target/scala-2.13/scoverage-report/scoverage.xml",
     "sonar.scala.coverage.reportPaths" -> "target/scala-2.13/scoverage-report/scoverage.xml",

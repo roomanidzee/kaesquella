@@ -27,12 +27,6 @@ jobs:
         sbt coverageReport
         sbt coverageAggregate
 
-    - name: Cache coverage file
-      uses: actions/cache@v2
-      with:
-        path: /home/runner/work/kaesquella/kaesquella/target/
-        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
-
     - name: Run SonarQube scanning
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
