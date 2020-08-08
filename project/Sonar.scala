@@ -8,11 +8,11 @@ object Sonar {
     "sonar.sourceEncoding" -> "UTF-8",
     "sonar.scala.version" -> "2.13.2",
 
-    "sonar.modules" -> "kaesquella-core",
+    "sonar.modules" -> "modules/core",
 
-    "kaesquella-core.sonar.projectName" -> "kaesquella-core",
-    "kaesquella-core.sonar.sources" -> "modules/core/src/main/scala",
-    "kaesquella-core.sonar.tests" -> "modules/core/src/test/scala",
+    "modules/core.sonar.projectName" -> "kaesquella-core",
+    "modules/core.sonar.sources" -> "modules/core/src/main/scala",
+    "modules/core.sonar.tests" -> "modules/core/src/test/scala",
 
     "sonar.sourceEncoding" -> "UTF-8",
     "sonar.scala.scoverage.reportPath" -> "target/scala-2.13/scoverage-report/scoverage.xml",
