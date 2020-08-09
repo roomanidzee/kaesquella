@@ -6,6 +6,6 @@ object Versions {
     val flexMark = "0.35.10"
 
     val tethys = "0.11.0"
-    val sttp = "2.2.3"
+    val sttp = "2.2.4"
 
 }
