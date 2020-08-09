@@ -2,9 +2,9 @@ name: build_info
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, dev ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, dev ]
 
 jobs:
 
@@ -31,6 +31,6 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: rm -rf ~/.scannerwork && sbt -Dsonar.login=$SONAR_TOKEN sonarScan
-      # strange action in case of cache  
+      run: sbt -Dsonar.login=$SONAR_TOKEN sonarScan
+      # trying to fix error  
       continue-on-error: true
