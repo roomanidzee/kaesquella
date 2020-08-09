@@ -32,5 +32,5 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: sbt -Dsonar.login=$SONAR_TOKEN sonarScan
-      # trying to fix error  
+      # bug for github actions, need to be here 
       continue-on-error: true
