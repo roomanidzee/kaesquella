@@ -2,6 +2,7 @@ import Dependencies._
 
 val projectVersion = "0.0.1"
 val scalaProjectVersion = "2.13.2"
+val coverageMinimumVal = 90
 
 lazy val kaesquella = (project in file("."))
   .settings(
@@ -21,7 +22,9 @@ lazy val kaesquella = (project in file("."))
       ),
     scalafmtOnCompile := true,
     assemblyJarName in assembly := s"kaesquella-${version.value}.jar",
-    sonarProperties := Sonar.properties
+    sonarProperties := Sonar.properties,
+    coverageMinimum := coverageMinimumVal,
+    coverageFailOnMinimum := true
   )
   .aggregate(core)
 
@@ -36,5 +39,7 @@ lazy val core = (project in file("modules/core"))
       ),
     scalafmtOnCompile := true,
     libraryDependencies ++= Dependencies.coreDeps ++ Dependencies.testDeps,
-    sonarProperties := Sonar.properties
+    sonarProperties := Sonar.properties,
+    coverageMinimum := coverageMinimumVal,
+    coverageFailOnMinimum := true
   )
