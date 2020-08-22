@@ -25,10 +25,17 @@ object Dependencies {
     "com.softwaremill.sttp.client" %% "async-http-client-backend-monix" % Versions.sttp,
   ).union(sttp)
 
+  private val logging: Seq[ModuleID] = Seq(
+    "org.apache.logging.log4j" % "log4j-api" % Versions.log4j2,
+    "org.apache.logging.log4j" % "log4j-core" % Versions.log4j2,
+    "org.apache.logging.log4j" % "log4j-slf4j-impl" % Versions.log4j2,
+    "com.typesafe.scala-logging" %% "scala-logging" % Versions.scalaLogging
+  )
+
   val coreDeps : Seq[ModuleID] = tethys
 
   val testDeps: Seq[ModuleID] = scalaTest.union(flexmark)
 
-  val monixDeps: Seq[ModuleID] = coreDeps.union(monix)
+  val monixDeps: Seq[ModuleID] = tethys.union(monix).union(logging)
 
 }

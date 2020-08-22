@@ -35,7 +35,7 @@ class QueryResponseTest extends AnyWordSpec with Matchers with EitherValues {
       fileData.close()
 
       val fileObj: Either[ReaderError, QueryResponse] = fileString.jsonAs[QueryResponse]
-      fileObj should be('right)
+      fileObj should be(Symbol("right"))
 
       val resultObj: QueryResponse = fileObj.right.get
 

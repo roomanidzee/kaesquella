@@ -35,7 +35,7 @@ class StatusInfoTest extends AnyWordSpec with Matchers with EitherValues {
 
       val fileObj: Either[ReaderError, StatusInfo] = fileString.jsonAs[StatusInfo]
 
-      fileObj should be('right)
+      fileObj should be(Symbol("right"))
 
       val expectedResult: StatusInfo = StatusInfo("SUCCESS", "Stream created and running")
 

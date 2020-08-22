@@ -35,7 +35,7 @@ class ExecutionErrorTest extends AnyWordSpec with Matchers with EitherValues {
 
       val fileObj: Either[ReaderError, ExecutionError] = fileString.jsonAs[ExecutionError]
 
-      fileObj should be('right)
+      fileObj should be(Symbol("right"))
 
       val expectedResult: ExecutionError = ExecutionError("4000", "some_message")
 

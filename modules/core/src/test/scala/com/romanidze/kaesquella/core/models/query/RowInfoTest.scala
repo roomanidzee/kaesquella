@@ -45,7 +45,7 @@ class RowInfoTest extends AnyWordSpec with Matchers with EitherValues {
       fileData.close()
 
       val fileObj: Either[ReaderError, RowInfo] = fileString.jsonAs[RowInfo]
-      fileObj should be('right)
+      fileObj should be(Symbol("right"))
 
       val resultObj: RowInfo = fileObj.right.get
 
