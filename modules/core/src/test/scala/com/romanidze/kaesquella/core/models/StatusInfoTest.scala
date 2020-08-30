@@ -39,7 +39,7 @@ class StatusInfoTest extends AnyWordSpec with Matchers with EitherValues {
 
       val expectedResult: StatusInfo = StatusInfo("SUCCESS", "Stream created and running")
 
-      fileObj.right.get shouldBe expectedResult
+      fileObj.toOption.get shouldBe expectedResult
 
     }
 

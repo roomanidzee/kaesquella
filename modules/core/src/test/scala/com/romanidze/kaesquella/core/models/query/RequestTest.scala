@@ -34,9 +34,9 @@ class RequestTest extends AnyWordSpec with Matchers with EitherValues {
       fileData.close()
 
       val fileObj: Either[ReaderError, Request] = fileString.jsonAs[Request]
-      fileObj should be('right)
+      fileObj should be(Symbol("right"))
 
-      val resultObj: Request = fileObj.right.get
+      val resultObj: Request = fileObj.toOption.get
 
       resultObj.input.split(";").length shouldBe 1
       resultObj.properties should contain("ksql.streams.auto.offset.reset" -> "earliest")

@@ -34,15 +34,12 @@ object ExecutionError {
  *
  * @param message error message
  * @param description error description
- * @param traceback error traceback
+ * @param traceback description in case of deserialization error
  * @author Andrey Romanov
  * @since 0.0.1
  */
-case class ClientError(message: String, description: String, traceback: String)
-
-object ClientError {
-
-  implicit val reader: JsonReader[ClientError] = jsonReader[ClientError]
-  implicit val writer: JsonObjectWriter[ClientError] = jsonWriter[ClientError]
-
-}
+case class ClientError(
+  message: String,
+  description: Option[ExecutionError],
+  traceback: Option[String]
+)

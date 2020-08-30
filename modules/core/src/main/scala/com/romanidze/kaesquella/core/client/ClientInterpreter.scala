@@ -24,7 +24,7 @@ trait ClientInterpreter[F[_]] {
    *
    * @return query status
    */
-  def getQueryStatus: F[Either[ClientError, StatusInfo]]
+  def getQueryStatus(queryID: String): F[Either[ClientError, StatusInfo]]
 
   /**
    * Method for retrieving server information

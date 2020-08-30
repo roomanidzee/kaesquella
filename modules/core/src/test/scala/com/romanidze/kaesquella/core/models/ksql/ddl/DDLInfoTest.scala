@@ -36,7 +36,7 @@ class DDLInfoTest extends AnyWordSpec with Matchers with EitherValues {
       val fileObj: Either[ReaderError, Seq[DDLInfo]] = fileString.jsonAs[Seq[DDLInfo]]
       fileObj should be(Symbol("right"))
 
-      val resultObj: Seq[DDLInfo] = fileObj.right.get
+      val resultObj: Seq[DDLInfo] = fileObj.toOption.get
 
       resultObj.length shouldBe 2
 

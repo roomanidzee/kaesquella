@@ -2,6 +2,7 @@ object Versions {
     
     val scalaTest = "3.1.1"
     val flexMark = "0.35.10"
+    val wiremock = "2.27.1"
 
     val tethys = "0.11.0"
     val sttp = "2.2.4"

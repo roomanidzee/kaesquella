@@ -37,9 +37,9 @@ class VersionInfoTest extends AnyWordSpec with Matchers with EitherValues {
 
       val fileObj: Either[ReaderError, KSQLVersionResponse] = fileString.jsonAs[KSQLVersionResponse]
 
-      fileObj should be('right)
+      fileObj should be(Symbol("right"))
 
-      val versionInfo: VersionInfo = fileObj.right.get.info
+      val versionInfo: VersionInfo = fileObj.toOption.get.info
 
       versionInfo.version shouldBe "5.1.2"
       versionInfo.clusterID shouldBe "j3tOi6E_RtO_TMH3gBmK7A"

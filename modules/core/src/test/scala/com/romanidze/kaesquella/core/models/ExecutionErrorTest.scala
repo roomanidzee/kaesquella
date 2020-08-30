@@ -39,7 +39,7 @@ class ExecutionErrorTest extends AnyWordSpec with Matchers with EitherValues {
 
       val expectedResult: ExecutionError = ExecutionError("4000", "some_message")
 
-      fileObj.right.get shouldBe expectedResult
+      fileObj.toOption.get shouldBe expectedResult
 
     }
 

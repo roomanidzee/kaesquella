@@ -38,7 +38,7 @@ class StreamResponseTest extends AnyWordSpec with Matchers with EitherValues {
       val fileObj: Either[ReaderError, StreamResponse] = fileString.jsonAs[StreamResponse]
       fileObj should be(Symbol("right"))
 
-      val resultObj: StreamResponse = fileObj.right.get
+      val resultObj: StreamResponse = fileObj.toOption.get
 
       resultObj.streams.length shouldBe 1
       resultObj.statement shouldBe "LIST STREAMS"

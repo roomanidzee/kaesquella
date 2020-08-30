@@ -16,7 +16,7 @@ class FramingTest extends AnyWordSpec with Matchers {
 
     "be processed for input with multiple lines" in {
 
-      val resourceURL: URL = getClass.getClassLoader.getResource("test.txt")
+      val resourceURL: URL = getClass.getClassLoader.getResource("framing/test.txt")
       val testFilePath: Path = Paths.get(resourceURL.toURI)
 
       val lineTerm = Array('\n'.toByte)

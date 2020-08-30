@@ -38,7 +38,7 @@ class TableResponseTest extends AnyWordSpec with Matchers with EitherValues {
       val fileObj: Either[ReaderError, TableResponse] = fileString.jsonAs[TableResponse]
       fileObj should be(Symbol("right"))
 
-      val resultObj: TableResponse = fileObj.right.get
+      val resultObj: TableResponse = fileObj.toOption.get
 
       resultObj.tables.length shouldBe 1
       resultObj.statement shouldBe "LIST TABLES"
