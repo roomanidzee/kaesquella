@@ -2,7 +2,6 @@ import Dependencies._
 
 val projectVersion = "0.0.1"
 val scalaProjectVersion = "2.13.2"
-val coverageMinimumVal = 90
 
 lazy val commonSettings = Seq(
   version := projectVersion,
@@ -20,7 +19,6 @@ lazy val commonSettings = Seq(
   ),
   scalafmtOnCompile := true,
   sonarProperties := Sonar.properties,
-  coverageMinimum := coverageMinimumVal,
   coverageFailOnMinimum := true
 )
 

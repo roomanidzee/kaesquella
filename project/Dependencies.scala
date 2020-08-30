@@ -22,7 +22,7 @@ object Dependencies {
   )
 
   private val monix: Seq[ModuleID] = Seq(
-    "com.softwaremill.sttp.client" %% "async-http-client-backend-monix" % Versions.sttp,
+    "com.softwaremill.sttp.client" %% "async-http-client-backend-monix" % Versions.sttp
   ).union(sttp)
 
   private val logging: Seq[ModuleID] = Seq(
