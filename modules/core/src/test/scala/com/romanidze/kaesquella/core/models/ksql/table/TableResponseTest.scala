@@ -17,10 +17,11 @@ class TableResponseTest extends AnyWordSpec with Matchers with EitherValues {
 
     "encode to json" in {
 
-      val testObj: TableResponse = TableResponse("test", Seq(TableInfo("test", "test", "test")))
+      val testObj: TableResponse =
+        TableResponse("test", Seq(TableInfo("test", "test", "test", "TABLE", true)))
 
       val json =
-        """{"statementText":"test","tables":[{"name":"test","topic":"test","format":"test"}]}"""
+        """{"statementText":"test","tables":[{"name":"test","topic":"test","format":"test","type":"TABLE","isWindowed":true}]}"""
 
       val resultString: String = testObj.asJson
 
@@ -35,7 +36,7 @@ class TableResponseTest extends AnyWordSpec with Matchers with EitherValues {
       fileData.close()
 
       val fileObj: Either[ReaderError, TableResponse] = fileString.jsonAs[TableResponse]
-      fileObj should be('right)
+      fileObj should be(Symbol("right"))
 
       val resultObj: TableResponse = fileObj.right.get
 

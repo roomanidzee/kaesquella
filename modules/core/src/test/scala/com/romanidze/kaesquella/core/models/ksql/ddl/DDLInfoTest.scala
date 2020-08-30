@@ -17,9 +17,9 @@ class DDLInfoTest extends AnyWordSpec with Matchers with EitherValues {
 
     "encode to json" in {
 
-      val testObj: DDLInfo = DDLInfo("test", "test", CommandStatus("test", "test"))
+      val testObj: DDLInfo = DDLInfo("test", "test", CommandStatus("test", "test"), 1)
       val json =
-        """{"statementText":"test","commandId":"test","commandStatus":{"status":"test","message":"test"}}"""
+        """{"statementText":"test","commandId":"test","commandStatus":{"status":"test","message":"test"},"commandSequenceNumber":1}"""
 
       val resultString: String = testObj.asJson
 

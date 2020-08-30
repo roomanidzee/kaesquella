@@ -11,11 +11,17 @@ import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
  * @param statement ksql statement
  * @param commandID command, which was created by statement (ID for status retrieve)
  * @param status result of statement
+ * @param commandSequenceNumber sequence number of operation
  *
  * @author Andrey Romanov
  * @since 0.0.1
  */
-case class DDLInfo(statement: String, commandID: String, status: CommandStatus) extends KSQLResponse
+case class DDLInfo(
+  statement: String,
+  commandID: String,
+  status: CommandStatus,
+  commandSequenceNumber: Long
+) extends KSQLResponse
 
 object DDLInfo {
 
@@ -23,6 +29,7 @@ object DDLInfo {
     .addField[String]("statementText")
     .addField[String]("commandId")
     .addField[CommandStatus]("commandStatus")
+    .addField[Long]("commandSequenceNumber")
     .buildReader(DDLInfo.apply)
 
   implicit val writer: JsonWriter[DDLInfo] = JsonWriter
@@ -30,5 +37,6 @@ object DDLInfo {
     .addField("statementText")(_.statement)
     .addField("commandId")(_.commandID)
     .addField("commandStatus")(_.status)
+    .addField("commandSequenceNumber")(_.commandSequenceNumber)
 
 }

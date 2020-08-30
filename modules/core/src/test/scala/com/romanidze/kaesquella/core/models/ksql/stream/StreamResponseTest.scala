@@ -17,10 +17,11 @@ class StreamResponseTest extends AnyWordSpec with Matchers with EitherValues {
 
     "encode to json" in {
 
-      val testObj: StreamResponse = StreamResponse("test", Seq(StreamInfo("test", "test", "test")))
+      val testObj: StreamResponse =
+        StreamResponse("test", Seq(StreamInfo("test", "test", "test", "STREAM")))
 
       val json =
-        """{"statementText":"test","streams":[{"name":"test","topic":"test","format":"test"}]}"""
+        """{"statementText":"test","streams":[{"name":"test","topic":"test","format":"test","type":"STREAM"}]}"""
 
       val resultString: String = testObj.asJson
 
