@@ -24,12 +24,13 @@ class FramingTest extends AnyWordSpec with Matchers {
       val expectedList: List[String] = List("Test", "Lines", "For", "Framing", "Execution")
 
       val lines: Task[List[String]] = file
-        .readAsync(testFilePath, 1000)
-        .pipeThrough(Framing(lineTerm, 1000))
+        .readAsync(testFilePath, 500)
+        .append(Array('\n'.toByte))
+        .pipeThrough(Framing(lineTerm, 200))
         .pipeThrough(utf8Decode)
         .toListL
 
-      lines.runSyncUnsafe() should contain atLeastOneElementOf expectedList
+      lines.runSyncUnsafe() shouldBe expectedList
 
     }
 
