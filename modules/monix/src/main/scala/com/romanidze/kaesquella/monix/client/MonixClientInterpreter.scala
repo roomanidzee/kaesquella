@@ -1,7 +1,5 @@
 package com.romanidze.kaesquella.monix.client
 
-import tethys._
-import tethys.jackson._
 import sttp.client._
 import sttp.client.asynchttpclient.monix._
 import com.romanidze.kaesquella.core.client.ClientInterpreter
@@ -9,13 +7,12 @@ import com.romanidze.kaesquella.core.models.ksql.{Request => KSQLInfoRequest}
 import com.romanidze.kaesquella.core.models.ksql.ddl.DDLInfo
 import com.romanidze.kaesquella.core.models.ksql.query.QueryResponse
 import com.romanidze.kaesquella.core.models.ksql.stream.StreamResponse
-import com.romanidze.kaesquella.core.models.{ksql, ClientError, ExecutionError, KSQLVersionResponse, StatusInfo}
+import com.romanidze.kaesquella.core.models.{ksql, processBody, ClientError, KSQLVersionResponse, StatusInfo}
 import com.romanidze.kaesquella.core.models.ksql.table.TableResponse
 import com.romanidze.kaesquella.core.models.query.{Request => KSQLQueryRequest}
 import com.romanidze.kaesquella.core.models.query.row.RowInfo
 import monix.eval.Task
 import org.asynchttpclient.{AsyncHttpClient, DefaultAsyncHttpClient}
-import tethys.readers.ReaderError
 
 class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
     extends ClientInterpreter[Task] {
@@ -40,33 +37,7 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
 
     val response: ClientSimpleResponse = request.send()
 
-    response.map(elem => {
-
-      val body: Either[String, String] = elem.body
-      val errorMessage = s"Unsuccessful response while retrieving query status for id ${queryID}"
-
-      if (body.isLeft) {
-
-        val errorBody: Either[ReaderError, ExecutionError] =
-          body.swap.toOption.get.jsonAs[ExecutionError]
-
-        if (errorBody.isLeft) {
-          Left(ClientError(errorMessage, None, Some(errorBody.swap.toOption.get.getMessage)))
-        }
-
-        Left(ClientError(errorMessage, Some(errorBody.toOption.get), None))
-      } else {
-
-        val queryStatus: Either[ReaderError, StatusInfo] = body.toOption.get.jsonAs[StatusInfo]
-
-        if (queryStatus.isLeft) {
-          Left(ClientError(errorMessage, None, Some(queryStatus.swap.toOption.get.getMessage)))
-        }
-
-        Right(queryStatus.toOption.get)
-      }
-
-    })
+    response.map(elem => processBody[StatusInfo](elem.body))
 
   }
 
@@ -75,7 +46,20 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
    *
    * @return server information
    */
-  override def getServerVersion: Task[Either[ClientError, KSQLVersionResponse]] = ???
+  override def getServerVersion: Task[Either[ClientError, KSQLVersionResponse]] = {
+
+    val requestURL: String = s"${baseURL}/info"
+
+    val request: ClientRequest = basicRequest
+      .header("Accept", "application/json")
+      .header("Content-Type", "application/json")
+      .get(uri"${requestURL}")
+
+    val response: ClientSimpleResponse = request.send()
+
+    response.map(elem => processBody[KSQLVersionResponse](elem.body))
+
+  }
 
   /**
    * Method for retrieving results of info raw request

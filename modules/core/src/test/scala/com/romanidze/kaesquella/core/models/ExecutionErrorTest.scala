@@ -17,29 +17,19 @@ class ExecutionErrorTest extends AnyWordSpec with Matchers with EitherValues {
 
     "encode to json" in {
 
-      val testObj: ExecutionError = ExecutionError("1000", "test")
-
-      val json = """{"error_code":"1000","message":"test"}"""
-
-      val resultString: String = testObj.asJson
-
-      resultString shouldBe json
+      ValidationUtils.validateEncode[ExecutionError](
+        ExecutionError("1000", "test"),
+        """{"error_code":"1000","message":"test"}"""
+      )
 
     }
 
     "decode from json" in {
 
-      val fileData: BufferedSource = Source.fromResource("error_response.json")
-      val fileString: String = fileData.mkString
-      fileData.close()
-
-      val fileObj: Either[ReaderError, ExecutionError] = fileString.jsonAs[ExecutionError]
-
-      fileObj should be(Symbol("right"))
-
-      val expectedResult: ExecutionError = ExecutionError("4000", "some_message")
-
-      fileObj.toOption.get shouldBe expectedResult
+      ValidationUtils.validateDecode[ExecutionError](
+        ExecutionError("4000", "some_message"),
+        "error_response.json"
+      )
 
     }
 

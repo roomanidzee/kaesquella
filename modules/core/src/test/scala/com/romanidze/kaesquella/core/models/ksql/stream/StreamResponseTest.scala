@@ -1,8 +1,8 @@
 package com.romanidze.kaesquella.core.models.ksql.stream
 
+import com.romanidze.kaesquella.core.models.ValidationUtils
 import tethys._
 import tethys.jackson._
-
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -23,25 +23,19 @@ class StreamResponseTest extends AnyWordSpec with Matchers with EitherValues {
       val json =
         """{"statementText":"test","streams":[{"name":"test","topic":"test","format":"test","type":"STREAM"}]}"""
 
-      val resultString: String = testObj.asJson
-
-      resultString shouldBe json
+      ValidationUtils.validateEncode[StreamResponse](testObj, json)
 
     }
 
     "decode from json" in {
 
-      val fileData: BufferedSource = Source.fromResource("ksql/responses/stream.json")
-      val fileString: String = fileData.mkString
-      fileData.close()
+      val testObj: StreamResponse =
+        StreamResponse(
+          "LIST STREAMS",
+          Seq(StreamInfo("test_stream", "test_topic", "JSON", "STREAM"))
+        )
 
-      val fileObj: Either[ReaderError, StreamResponse] = fileString.jsonAs[StreamResponse]
-      fileObj should be(Symbol("right"))
-
-      val resultObj: StreamResponse = fileObj.toOption.get
-
-      resultObj.streams.length shouldBe 1
-      resultObj.statement shouldBe "LIST STREAMS"
+      ValidationUtils.validateDecode[StreamResponse](testObj, "ksql/responses/stream.json")
 
     }
 

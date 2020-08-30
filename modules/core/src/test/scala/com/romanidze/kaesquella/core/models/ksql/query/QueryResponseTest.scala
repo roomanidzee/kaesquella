@@ -1,8 +1,8 @@
 package com.romanidze.kaesquella.core.models.ksql.query
 
+import com.romanidze.kaesquella.core.models.ValidationUtils
 import tethys._
 import tethys.jackson._
-
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -22,26 +22,16 @@ class QueryResponseTest extends AnyWordSpec with Matchers with EitherValues {
       val json =
         """{"statementText":"test","queries":[{"queryString":"test","sinks":"test","id":"test"}]}"""
 
-      val resultString: String = testObj.asJson
-
-      resultString shouldBe json
+      ValidationUtils.validateEncode[QueryResponse](testObj, json)
 
     }
 
     "decode from json" in {
 
-      val fileData: BufferedSource = Source.fromResource("ksql/responses/query.json")
-      val fileString: String = fileData.mkString
-      fileData.close()
+      val testObj: QueryResponse =
+        QueryResponse("LIST QUERIES", Seq(QueryInfo("LIST QUERIES", "test, test", "test_id")))
 
-      val fileObj: Either[ReaderError, QueryResponse] = fileString.jsonAs[QueryResponse]
-      fileObj should be(Symbol("right"))
-
-      val resultObj: QueryResponse = fileObj.toOption.get
-
-      resultObj.queries.length shouldBe 1
-
-      resultObj.queries(0).id shouldBe "test_id"
+      ValidationUtils.validateDecode[QueryResponse](testObj, "ksql/responses/query.json")
 
     }
 

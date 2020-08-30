@@ -1,7 +1,6 @@
 package com.romanidze.kaesquella.monix
 
 import java.nio.ByteBuffer
-
 import monix.eval.Task
 import monix.reactive.Observable
 import sttp.client.{Request, Response, SttpBackend}

@@ -1,8 +1,8 @@
 package com.romanidze.kaesquella.core.models.ksql.table
 
+import com.romanidze.kaesquella.core.models.ValidationUtils
 import tethys._
 import tethys.jackson._
-
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -23,25 +23,19 @@ class TableResponseTest extends AnyWordSpec with Matchers with EitherValues {
       val json =
         """{"statementText":"test","tables":[{"name":"test","topic":"test","format":"test","type":"TABLE","isWindowed":true}]}"""
 
-      val resultString: String = testObj.asJson
-
-      resultString shouldBe json
+      ValidationUtils.validateEncode[TableResponse](testObj, json)
 
     }
 
     "decode from json" in {
 
-      val fileData: BufferedSource = Source.fromResource("ksql/responses/table.json")
-      val fileString: String = fileData.mkString
-      fileData.close()
+      val testObj: TableResponse =
+        TableResponse(
+          "LIST TABLES",
+          Seq(TableInfo("test_table", "test_topic", "JSON", "TABLE", true))
+        )
 
-      val fileObj: Either[ReaderError, TableResponse] = fileString.jsonAs[TableResponse]
-      fileObj should be(Symbol("right"))
-
-      val resultObj: TableResponse = fileObj.toOption.get
-
-      resultObj.tables.length shouldBe 1
-      resultObj.statement shouldBe "LIST TABLES"
+      ValidationUtils.validateDecode[TableResponse](testObj, "ksql/responses/table.json")
 
     }
 

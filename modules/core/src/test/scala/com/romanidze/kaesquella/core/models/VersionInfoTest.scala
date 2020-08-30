@@ -20,30 +20,19 @@ class VersionInfoTest extends AnyWordSpec with Matchers with EitherValues {
       val childObj: VersionInfo = VersionInfo("0.0.1", "test", "test")
       val testObj: KSQLVersionResponse = KSQLVersionResponse(childObj)
 
-      val json =
+      ValidationUtils.validateEncode[KSQLVersionResponse](
+        testObj,
         """{"KsqlServerInfo":{"version":"0.0.1","kafkaClusterId":"test","ksqlServiceId":"test"}}"""
-
-      val resultString: String = testObj.asJson
-
-      resultString shouldBe json
+      )
 
     }
 
     "decode from json" in {
 
-      val fileData: BufferedSource = Source.fromResource("version_info.json")
-      val fileString: String = fileData.mkString
-      fileData.close()
+      val childObj: VersionInfo = VersionInfo("5.1.2", "j3tOi6E_RtO_TMH3gBmK7A", "default_")
+      val testObj: KSQLVersionResponse = KSQLVersionResponse(childObj)
 
-      val fileObj: Either[ReaderError, KSQLVersionResponse] = fileString.jsonAs[KSQLVersionResponse]
-
-      fileObj should be(Symbol("right"))
-
-      val versionInfo: VersionInfo = fileObj.toOption.get.info
-
-      versionInfo.version shouldBe "5.1.2"
-      versionInfo.clusterID shouldBe "j3tOi6E_RtO_TMH3gBmK7A"
-      versionInfo.serviceID shouldBe "default_"
+      ValidationUtils.validateDecode[KSQLVersionResponse](testObj, "version_info.json")
 
     }
 
