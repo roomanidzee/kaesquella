@@ -2,7 +2,6 @@ package com.romanidze.kaesquella.core.client
 
 import com.romanidze.kaesquella.core.models.{ClientError, KSQLVersionResponse, StatusInfo}
 import com.romanidze.kaesquella.core.models.ksql.{Request => KSQLInfoRequest}
-import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
 import com.romanidze.kaesquella.core.models.query.{Request => KSQLQueryRequest}
 import com.romanidze.kaesquella.core.models.query.row.RowInfo
 import com.romanidze.kaesquella.core.models.ksql.ddl.DDLInfo
@@ -32,14 +31,6 @@ trait ClientInterpreter[F[_]] {
    * @return server information
    */
   def getServerVersion: F[Either[ClientError, KSQLVersionResponse]]
-
-  /**
-   * Method for retrieving results of info raw request
-   *
-   * @param request request instance with query (queries) and properties
-   * @return [[com.romanidze.kaesquella.core.models.ksql.KSQLResponse]] child instance
-   */
-  def runInfoRequest(request: KSQLInfoRequest): F[Either[ClientError, KSQLResponse]]
 
   /**
    * Method for retrieving results of select request

@@ -3,8 +3,6 @@ package com.romanidze.kaesquella.core.models.ksql.ddl
 import tethys._
 import tethys.jackson._
 
-import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
-
 /**
  * Class for representing execution result for such queries, like `CREATE`, `DROP`, `TERMINATE`
  *
@@ -21,7 +19,7 @@ case class DDLInfo(
   commandID: String,
   status: CommandStatus,
   commandSequenceNumber: Long
-) extends KSQLResponse
+)
 
 object DDLInfo {
 

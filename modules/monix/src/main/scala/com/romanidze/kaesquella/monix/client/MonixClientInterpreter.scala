@@ -62,16 +62,6 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
   }
 
   /**
-   * Method for retrieving results of info raw request
-   *
-   * @param request request instance with query (queries) and properties
-   * @return [[com.romanidze.kaesquella.core.models.ksql.KSQLResponse]] child instance
-   */
-  override def runInfoRequest(
-    request: KSQLInfoRequest
-  ): Task[Either[ClientError, ksql.KSQLResponse]] = ???
-
-  /**
    * Method for retrieving results of select request
    *
    * @param request request instance with query and properties

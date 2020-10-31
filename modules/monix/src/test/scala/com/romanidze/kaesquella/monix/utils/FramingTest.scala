@@ -25,7 +25,6 @@ class FramingTest extends AnyWordSpec with Matchers {
 
       val lines: Task[List[String]] = file
         .readAsync(testFilePath, 500)
-        .append(Array('\n'.toByte))
         .pipeThrough(Framing(lineTerm, 200))
         .pipeThrough(utf8Decode)
         .toListL
