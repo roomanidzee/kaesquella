@@ -1,5 +1,6 @@
 package com.romanidze.kaesquella.core
 
+import com.romanidze.kaesquella.core.models.ksql.Request
 import tethys._
 import tethys.jackson._
 import tethys.JsonReader
@@ -31,6 +32,16 @@ package object models {
 
       Right(queryStatus.toOption.get)
     }
+
+  }
+
+  def checkKSQLRequest(request: Request): Boolean = {
+
+    val inputQuery = request.input
+
+    inputQuery.startsWith("CREATE") || inputQuery.startsWith("DROP") || inputQuery.startsWith(
+      "TERMINATE"
+    )
 
   }
 

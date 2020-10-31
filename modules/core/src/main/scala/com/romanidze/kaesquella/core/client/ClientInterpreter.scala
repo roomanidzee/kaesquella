@@ -16,7 +16,7 @@ import com.romanidze.kaesquella.core.models.ksql.query.QueryResponse
  * @since 0.0.1
  * @version 0.0.1
  */
-trait ClientInterpreter[F[_]] {
+trait ClientInterpreter[F[_], G[_]] {
 
   /**
    * Method for retrieving information about query status
@@ -38,7 +38,9 @@ trait ClientInterpreter[F[_]] {
    * @param request request instance with query and properties
    * @return row information with data
    */
-  def runQueryRequest(request: KSQLQueryRequest): F[Either[ClientError, RowInfo]]
+  def runQueryRequest(
+    request: KSQLQueryRequest
+  ): F[Either[ClientError, G[Either[ClientError, RowInfo]]]]
 
   /**
    * Execution for CREATE / DROP / TERMINATE commands
