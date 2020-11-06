@@ -3,8 +3,6 @@ package com.romanidze.kaesquella.core.models.ksql.table
 import tethys._
 import tethys.jackson._
 
-import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
-
 /**
  * Class for representing `LIST TABLES` and `SHOW TABLES` results
  *
@@ -14,7 +12,7 @@ import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
  * @author Andrey Romanov
  * @since 0.0.1
  */
-case class TableResponse(statement: String, tables: Seq[TableInfo]) extends KSQLResponse
+case class TableResponse(statement: String, tables: Seq[TableInfo])
 
 object TableResponse {
 

@@ -10,11 +10,12 @@ import tethys.derivation.semiauto._
  * @param name stream name
  * @param topic topic, which is consumed by stream
  * @param format serialization format for data in stream (JSON, AVRO, DELIMITED)
+ * @param type type information
  *
  * @author Andrey Romanov
  * @since 0.0.1
  */
-case class StreamInfo(name: String, topic: String, format: String)
+case class StreamInfo(name: String, topic: String, format: String, `type`: String)
 
 object StreamInfo {
 

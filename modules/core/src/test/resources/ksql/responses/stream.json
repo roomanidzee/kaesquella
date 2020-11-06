@@ -4,7 +4,8 @@
         {
             "name": "test_stream",
             "topic": "test_topic",
-            "format": "JSON"
+            "format": "JSON",
+            "type": "STREAM"
         }
     ]
 }

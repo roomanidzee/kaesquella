@@ -29,6 +29,7 @@ target
 ### VisualStudioCode ###
 .vscode
 .metals
+.idea
 metals.sbt
 .bloop
 *.code-workspace
