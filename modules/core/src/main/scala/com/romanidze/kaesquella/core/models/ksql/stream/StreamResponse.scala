@@ -3,8 +3,6 @@ package com.romanidze.kaesquella.core.models.ksql.stream
 import tethys._
 import tethys.jackson._
 
-import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
-
 /**
  * Class for representing `LIST STREAMS` and `SHOW STREAMS` results
  *
@@ -14,7 +12,7 @@ import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
  * @author Andrey Romanov
  * @since 0.0.1
  */
-case class StreamResponse(statement: String, streams: Seq[StreamInfo]) extends KSQLResponse
+case class StreamResponse(statement: String, streams: Seq[StreamInfo])
 
 object StreamResponse {
 

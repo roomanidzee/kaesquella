@@ -17,29 +17,19 @@ class StatusInfoTest extends AnyWordSpec with Matchers with EitherValues {
 
     "encode to json" in {
 
-      val testObj: StatusInfo = StatusInfo("SUCCESS", "test_message")
-
-      val json = """{"status":"SUCCESS","message":"test_message"}"""
-
-      val resultString: String = testObj.asJson
-
-      resultString shouldBe json
+      ValidationUtils.validateEncode[StatusInfo](
+        StatusInfo("SUCCESS", "test_message"),
+        """{"status":"SUCCESS","message":"test_message"}"""
+      )
 
     }
 
     "decode from json" in {
 
-      val fileData: BufferedSource = Source.fromResource("status.json")
-      val fileString: String = fileData.mkString
-      fileData.close()
-
-      val fileObj: Either[ReaderError, StatusInfo] = fileString.jsonAs[StatusInfo]
-
-      fileObj should be('right)
-
-      val expectedResult: StatusInfo = StatusInfo("SUCCESS", "Stream created and running")
-
-      fileObj.right.get shouldBe expectedResult
+      ValidationUtils.validateDecode[StatusInfo](
+        StatusInfo("SUCCESS", "Stream created and running"),
+        "status.json"
+      )
 
     }
 

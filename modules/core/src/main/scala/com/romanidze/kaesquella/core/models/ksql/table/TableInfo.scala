@@ -10,8 +10,16 @@ import tethys.derivation.semiauto._
  * @param name table name
  * @param topic topic, which is consumed by table
  * @param format data serialization format (JSON, AVRO, DELIMITED)
+ * @param type type of table
+ * @param isWindowed if the table provides windowed results
  */
-case class TableInfo(name: String, topic: String, format: String)
+case class TableInfo(
+  name: String,
+  topic: String,
+  format: String,
+  `type`: String,
+  isWindowed: Boolean
+)
 
 object TableInfo {
 

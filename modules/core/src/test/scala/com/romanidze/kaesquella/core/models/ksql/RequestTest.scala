@@ -1,8 +1,8 @@
 package com.romanidze.kaesquella.core.models.ksql
 
+import com.romanidze.kaesquella.core.models.ValidationUtils
 import tethys._
 import tethys.jackson._
-
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -17,29 +17,21 @@ class RequestTest extends AnyWordSpec with Matchers with EitherValues {
 
     "encode to json" in {
 
-      val testObj: Request = Request("test", Map("test" -> "test"))
-
-      val json = """{"ksql":"test","streamsProperties":{"test":"test"}}"""
-
-      val resultString: String = testObj.asJson
-
-      resultString shouldBe json
+      ValidationUtils.validateEncode[Request](
+        Request("test", Map("test" -> "test")),
+        """{"ksql":"test","streamsProperties":{"test":"test"}}"""
+      )
 
     }
 
     "decode from json" in {
 
-      val fileData: BufferedSource = Source.fromResource("ksql/request.json")
-      val fileString: String = fileData.mkString
-      fileData.close()
+      val expectedObj = Request(
+        "CREATE STREAM pageviews_home AS SELECT * FROM pageviews_original WHERE pageid='home'; CREATE STREAM pageviews_alice AS SELECT * FROM pageviews_original WHERE userid='alice';",
+        Map("ksql.streams.auto.offset.reset" -> "earliest")
+      )
 
-      val fileObj: Either[ReaderError, Request] = fileString.jsonAs[Request]
-      fileObj should be('right)
-
-      val resultObj: Request = fileObj.right.get
-
-      resultObj.input.split(";").length shouldBe 2
-      resultObj.properties should contain("ksql.streams.auto.offset.reset" -> "earliest")
+      ValidationUtils.validateDecode[Request](expectedObj, "ksql/request.json")
 
     }
 

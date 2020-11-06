@@ -3,8 +3,6 @@ package com.romanidze.kaesquella.core.models.ksql.query
 import tethys._
 import tethys.jackson._
 
-import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
-
 /**
  * Class for representing `LIST QUERIES` and `SHOW QUERIES` results
  *
@@ -14,7 +12,7 @@ import com.romanidze.kaesquella.core.models.ksql.KSQLResponse
  * @author Andrey Romanov
  * @since 0.0.1
  */
-case class QueryResponse(statement: String, queries: Seq[QueryInfo]) extends KSQLResponse
+case class QueryResponse(statement: String, queries: Seq[QueryInfo])
 
 object QueryResponse {
 
