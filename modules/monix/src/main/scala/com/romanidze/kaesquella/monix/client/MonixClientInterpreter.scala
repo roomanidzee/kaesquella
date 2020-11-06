@@ -11,7 +11,7 @@ import com.romanidze.kaesquella.core.models.ksql.{Request => KSQLInfoRequest}
 import com.romanidze.kaesquella.core.models.ksql.ddl.DDLInfo
 import com.romanidze.kaesquella.core.models.ksql.query.QueryResponse
 import com.romanidze.kaesquella.core.models.ksql.stream.StreamResponse
-import com.romanidze.kaesquella.core.models.{checkKSQLRequest, processBody, ClientError, ExecutionError, KSQLVersionResponse, StatusInfo}
+import com.romanidze.kaesquella.core.models.{processBody, ClientError, KSQLVersionResponse, StatusInfo}
 import com.romanidze.kaesquella.core.models.ksql.table.TableResponse
 import com.romanidze.kaesquella.core.models.query.{Request => KSQLQueryRequest}
 import com.romanidze.kaesquella.core.models.query.row.RowInfo
@@ -75,9 +75,7 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
    * @param request request instance with query and properties
    * @return row information with data
    */
-  override def runQueryRequest(
-    request: KSQLQueryRequest
-  ): Task[Either[ClientError, Observable[Either[ClientError, RowInfo]]]] = {
+  override def runQueryRequest(inputRequest: KSQLQueryRequest): RowInfoResponse = {
 
     val requestURL: String = s"${baseURL}/query"
 
@@ -85,6 +83,7 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
       .header("Accept", "application/vnd.ksql.v1+json")
       .header("Content-Type", "application/vnd.ksql.v1+json")
       .post(uri"${requestURL}")
+      .body(inputRequest.asJson)
       .response(asStream[Observable[ByteBuffer]])
       .readTimeout(Duration.Inf)
 
@@ -101,23 +100,6 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
    * @return information about execution result
    */
   override def runDDLRequest(request: KSQLInfoRequest): Task[Either[ClientError, DDLInfo]] = {
-
-    if (!checkKSQLRequest(request)) {
-      Task {
-        Left(
-          ClientError(
-            s"Wrong input query for DDL request.",
-            Some(
-              ExecutionError(
-                "0",
-                s"Method supports only CREATE / DROP / TERMINATE queries, but not this: ${request.input}"
-              )
-            ),
-            None
-          )
-        )
-      }
-    }
 
     val requestURL: String = s"${baseURL}/ksql"
 

@@ -35,14 +35,4 @@ package object models {
 
   }
 
-  def checkKSQLRequest(request: Request): Boolean = {
-
-    val inputQuery = request.input
-
-    inputQuery.startsWith("CREATE") || inputQuery.startsWith("DROP") || inputQuery.startsWith(
-      "TERMINATE"
-    )
-
-  }
-
 }
