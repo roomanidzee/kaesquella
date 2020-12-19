@@ -2,7 +2,6 @@ package com.romanidze.kaesquella.core.models
 
 import tethys._
 import tethys.jackson._
-import tethys.derivation.semiauto._
 
 /**
  * Class for representing an error instance from KSQL Server

@@ -3,6 +3,7 @@ package com.romanidze.kaesquella.monix.client
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.romanidze.kaesquella.core.models.ksql.ddl.DDLInfo
+import com.romanidze.kaesquella.core.client.Output
 import com.romanidze.kaesquella.core.models.{ClientError, KSQLVersionResponse, StatusInfo}
 import com.romanidze.kaesquella.core.models.ksql.{Request => KSQLInfoRequest}
 import com.romanidze.kaesquella.core.models.query.row.RowInfo
@@ -36,10 +37,10 @@ class MonixClientInterpreterTest
 
     "retrieve query status" in {
 
-      val responseTask: Task[Either[ClientError, StatusInfo]] =
+      val responseTask: Task[Output[StatusInfo]] =
         client.getQueryStatus("stream/PAGEVIEWS/create")
 
-      val responseEither: Either[ClientError, StatusInfo] = responseTask.runSyncUnsafe()
+      val responseEither: Output[StatusInfo] = responseTask.runSyncUnsafe()
 
       responseEither should be(Symbol("right"))
 
@@ -49,9 +50,9 @@ class MonixClientInterpreterTest
 
     "retrieve server version" in {
 
-      val responseTask: Task[Either[ClientError, KSQLVersionResponse]] = client.getServerVersion
+      val responseTask: Task[Output[KSQLVersionResponse]] = client.getServerVersion
 
-      val responseEither: Either[ClientError, KSQLVersionResponse] = responseTask.runSyncUnsafe()
+      val responseEither: Output[KSQLVersionResponse] = responseTask.runSyncUnsafe()
 
       responseEither should be(Symbol("right"))
 
@@ -70,9 +71,9 @@ class MonixClientInterpreterTest
         Map.empty[String, String]
       )
 
-      val responseTask: Task[Either[ClientError, DDLInfo]] = client.runDDLRequest(request)
+      val responseTask: Task[Output[DDLInfo]] = client.runDDLRequest(request)
 
-      val responseEither: Either[ClientError, DDLInfo] = responseTask.runSyncUnsafe()
+      val responseEither: Output[DDLInfo] = responseTask.runSyncUnsafe()
 
       responseEither should be(Symbol("right"))
 
@@ -88,14 +89,14 @@ class MonixClientInterpreterTest
 
       val responseTask: RowInfoResponse = client.runQueryRequest(request)
 
-      val responseEither: Either[ClientError, Observable[Either[ClientError, RowInfo]]] =
+      val responseEither: Output[Observable[Output[RowInfo]]] =
         responseTask.runSyncUnsafe()
 
       responseEither should be(Symbol("right"))
 
-      val rowList: Task[List[Either[ClientError, RowInfo]]] = responseEither.toOption.get.toListL
+      val rowList: Task[List[Output[RowInfo]]] = responseEither.toOption.get.toListL
 
-      val resultList: List[Either[ClientError, RowInfo]] = rowList.runSyncUnsafe()
+      val resultList: List[Output[RowInfo]] = rowList.runSyncUnsafe()
 
       implicit val format: DefaultFormats = DefaultFormats
 

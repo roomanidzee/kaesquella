@@ -6,7 +6,9 @@ import tethys._
 import tethys.jackson._
 import sttp.client._
 import sttp.client.asynchttpclient.monix._
-import com.romanidze.kaesquella.core.client.ClientInterpreter
+import sttp.client.asynchttpclient.WebSocketHandler
+import com.romanidze.kaesquella.core.client.{ClientFPInterpreter, ClientInterpreter}
+import com.romanidze.kaesquella.core.client.Output
 import com.romanidze.kaesquella.core.models.ksql.{Request => KSQLInfoRequest}
 import com.romanidze.kaesquella.core.models.ksql.ddl.DDLInfo
 import com.romanidze.kaesquella.core.models.ksql.query.QueryResponse
@@ -23,29 +25,21 @@ import org.asynchttpclient.{AsyncHttpClient, DefaultAsyncHttpClient}
 import scala.concurrent.duration.Duration
 
 class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
-    extends ClientInterpreter[Task, Observable] {
+    extends ClientFPInterpreter[Task, Observable, WebSocketHandler](baseURL)
+    with ClientInterpreter[Task, Observable] {
 
   def this(baseURL: String) = this(baseURL, new DefaultAsyncHttpClient())
 
-  private implicit val backend: MonixBackend = AsyncHttpClientMonixBackend.usingClient(httpClient)
+  override implicit val backend: MonixBackend = AsyncHttpClientMonixBackend.usingClient(httpClient)
 
   /**
    * Method for retrieving information about query status
    *
    * @return query status
    */
-  override def getQueryStatus(queryID: String): Task[Either[ClientError, StatusInfo]] = {
+  override def getQueryStatus(queryID: String): Task[Output[StatusInfo]] = {
 
-    val requestURL: String = s"${baseURL}/status/${queryID}"
-
-    val request: ClientRequest = basicRequest
-      .header("Accept", "application/vnd.ksql.v1+json")
-      .header("Content-Type", "application/vnd.ksql.v1+json")
-      .get(uri"${requestURL}")
-
-    val response: ClientSimpleResponse = request.send()
-
-    response.map(elem => processBody[StatusInfo](elem.body))
+    sendGETRequest(s"${baseURL}/status/${queryID}").map(elem => processBody[StatusInfo](elem.body))
 
   }
 
@@ -54,18 +48,9 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
    *
    * @return server information
    */
-  override def getServerVersion: Task[Either[ClientError, KSQLVersionResponse]] = {
+  override def getServerVersion: Task[Output[KSQLVersionResponse]] = {
 
-    val requestURL: String = s"${baseURL}/info"
-
-    val request: ClientRequest = basicRequest
-      .header("Accept", "application/json")
-      .header("Content-Type", "application/json")
-      .get(uri"${requestURL}")
-
-    val response: ClientSimpleResponse = request.send()
-
-    response.map(elem => processBody[KSQLVersionResponse](elem.body))
+    sendGETRequest(s"${baseURL}/info").map(elem => processBody[KSQLVersionResponse](elem.body))
 
   }
 
@@ -79,17 +64,8 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
 
     val requestURL: String = s"${baseURL}/query"
 
-    val request: ClientStreamingRequest = basicRequest
-      .header("Accept", "application/vnd.ksql.v1+json")
-      .header("Content-Type", "application/vnd.ksql.v1+json")
-      .post(uri"${requestURL}")
-      .body(inputRequest.asJson)
-      .response(asStream[Observable[ByteBuffer]])
-      .readTimeout(Duration.Inf)
-
-    val response: ClientStreamingResponse = request.send()
-
-    response.map(elem => processRowInfo(elem.body))
+    sendStreamRequest(s"${baseURL}/query", inputRequest.asJson)
+      .map(elem => processRowInfo(elem.body))
 
   }
 
@@ -99,19 +75,9 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
    * @param request request instance with query (queries) and properties
    * @return information about execution result
    */
-  override def runDDLRequest(request: KSQLInfoRequest): Task[Either[ClientError, DDLInfo]] = {
+  override def runDDLRequest(request: KSQLInfoRequest): Task[Output[DDLInfo]] = {
 
-    val requestURL: String = s"${baseURL}/ksql"
-
-    val clientRequest: ClientRequest = basicRequest
-      .header("Accept", "application/vnd.ksql.v1+json")
-      .header("Content-Type", "application/vnd.ksql.v1+json")
-      .post(uri"${requestURL}")
-      .body(request.asJson)
-
-    val response: ClientSimpleResponse = clientRequest.send()
-
-    response.map(elem => processBody[DDLInfo](elem.body))
+    sendPOSTRequest(s"${baseURL}/ksql", request.asJson).map(elem => processBody[DDLInfo](elem.body))
 
   }
 
@@ -120,21 +86,13 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
    *
    * @return information about KSQL streams
    */
-  override def getStreams: Task[Either[ClientError, StreamResponse]] = {
+  override def getStreams: Task[Output[StreamResponse]] = {
 
     val request: KSQLInfoRequest = KSQLInfoRequest("SHOW STREAMS", Map.empty[String, String])
 
     val requestURL: String = s"${baseURL}/ksql"
 
-    val clientRequest: ClientRequest = basicRequest
-      .header("Accept", "application/vnd.ksql.v1+json")
-      .header("Content-Type", "application/vnd.ksql.v1+json")
-      .post(uri"${requestURL}")
-      .body(request.asJson)
-
-    val response: ClientSimpleResponse = clientRequest.send()
-
-    response.map(elem => processBody[StreamResponse](elem.body))
+    sendPOSTRequest(requestURL, request.asJson).map(elem => processBody[StreamResponse](elem.body))
 
   }
 
@@ -143,21 +101,13 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
    *
    * @return information about KSQL tables
    */
-  override def getTables: Task[Either[ClientError, TableResponse]] = {
+  override def getTables: Task[Output[TableResponse]] = {
 
     val request: KSQLInfoRequest = KSQLInfoRequest("SHOW TABLES", Map.empty[String, String])
 
     val requestURL: String = s"${baseURL}/ksql"
 
-    val clientRequest: ClientRequest = basicRequest
-      .header("Accept", "application/vnd.ksql.v1+json")
-      .header("Content-Type", "application/vnd.ksql.v1+json")
-      .post(uri"${requestURL}")
-      .body(request.asJson)
-
-    val response: ClientSimpleResponse = clientRequest.send()
-
-    response.map(elem => processBody[TableResponse](elem.body))
+    sendPOSTRequest(requestURL, request.asJson).map(elem => processBody[TableResponse](elem.body))
 
   }
 
@@ -166,21 +116,13 @@ class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
    *
    * @return information about KSQL queries
    */
-  override def getQueries: Task[Either[ClientError, QueryResponse]] = {
+  override def getQueries: Task[Output[QueryResponse]] = {
 
     val request: KSQLInfoRequest = KSQLInfoRequest("SHOW QUERIES", Map.empty[String, String])
 
     val requestURL: String = s"${baseURL}/ksql"
 
-    val clientRequest: ClientRequest = basicRequest
-      .header("Accept", "application/vnd.ksql.v1+json")
-      .header("Content-Type", "application/vnd.ksql.v1+json")
-      .post(uri"${requestURL}")
-      .body(request.asJson)
-
-    val response: ClientSimpleResponse = clientRequest.send()
-
-    response.map(elem => processBody[QueryResponse](elem.body))
+    sendPOSTRequest(requestURL, request.asJson).map(elem => processBody[QueryResponse](elem.body))
 
   }
 }

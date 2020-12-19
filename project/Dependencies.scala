@@ -36,7 +36,7 @@ object Dependencies {
     "com.typesafe.scala-logging" %% "scala-logging" % Versions.scalaLogging
   )
 
-  val coreDeps : Seq[ModuleID] = tethys
+  val coreDeps : Seq[ModuleID] = tethys.union(sttp)
 
   val testDeps: Seq[ModuleID] = scalaTest.union(flexmark).union(wiremock)
 
