@@ -13,16 +13,13 @@ import com.romanidze.kaesquella.core.models.ksql.{Request => KSQLInfoRequest}
 import com.romanidze.kaesquella.core.models.ksql.ddl.DDLInfo
 import com.romanidze.kaesquella.core.models.ksql.query.QueryResponse
 import com.romanidze.kaesquella.core.models.ksql.stream.StreamResponse
-import com.romanidze.kaesquella.core.models.{processBody, ClientError, KSQLVersionResponse, StatusInfo}
+import com.romanidze.kaesquella.core.models.{processBody, KSQLVersionResponse, StatusInfo}
 import com.romanidze.kaesquella.core.models.ksql.table.TableResponse
 import com.romanidze.kaesquella.core.models.query.{Request => KSQLQueryRequest}
-import com.romanidze.kaesquella.core.models.query.row.RowInfo
 import com.romanidze.kaesquella.monix.utils.processRowInfo
 import monix.eval.Task
 import monix.reactive.Observable
 import org.asynchttpclient.{AsyncHttpClient, DefaultAsyncHttpClient}
-
-import scala.concurrent.duration.Duration
 
 class MonixClientInterpreter(baseURL: String, httpClient: AsyncHttpClient)
     extends ClientFPInterpreter[Task, Observable, WebSocketHandler](baseURL)
