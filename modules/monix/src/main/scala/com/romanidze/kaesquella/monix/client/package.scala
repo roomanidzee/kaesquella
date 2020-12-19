@@ -3,6 +3,7 @@ package com.romanidze.kaesquella.monix
 import java.nio.ByteBuffer
 
 import com.romanidze.kaesquella.core.models.ClientError
+import com.romanidze.kaesquella.core.client.Output
 import com.romanidze.kaesquella.core.models.query.row.RowInfo
 import monix.eval.Task
 import monix.reactive.Observable
@@ -18,5 +19,5 @@ package object client {
   type ClientStreamingRequest =
     RequestT[Identity, Either[String, Observable[ByteBuffer]], Observable[ByteBuffer]]
   type ClientStreamingResponse = Task[Response[Either[String, Observable[ByteBuffer]]]]
-  type RowInfoResponse = Task[Either[ClientError, Observable[Either[ClientError, RowInfo]]]]
+  type RowInfoResponse = Task[Output[Observable[Output[RowInfo]]]]
 }

@@ -23,14 +23,14 @@ trait ClientInterpreter[F[_], G[_]] {
    *
    * @return query status
    */
-  def getQueryStatus(queryID: String): F[Either[ClientError, StatusInfo]]
+  def getQueryStatus(queryID: String): F[Output[StatusInfo]]
 
   /**
    * Method for retrieving server information
    *
    * @return server information
    */
-  def getServerVersion: F[Either[ClientError, KSQLVersionResponse]]
+  def getServerVersion: F[Output[KSQLVersionResponse]]
 
   /**
    * Method for retrieving results of select request
@@ -38,9 +38,7 @@ trait ClientInterpreter[F[_], G[_]] {
    * @param request request instance with query and properties
    * @return row information with data
    */
-  def runQueryRequest(
-    request: KSQLQueryRequest
-  ): F[Either[ClientError, G[Either[ClientError, RowInfo]]]]
+  def runQueryRequest(request: KSQLQueryRequest): F[Output[G[Output[RowInfo]]]]
 
   /**
    * Execution for CREATE / DROP / TERMINATE commands
@@ -48,27 +46,27 @@ trait ClientInterpreter[F[_], G[_]] {
    * @param request request instance with query (queries) and properties
    * @return information about execution result
    */
-  def runDDLRequest(request: KSQLInfoRequest): F[Either[ClientError, DDLInfo]]
+  def runDDLRequest(request: KSQLInfoRequest): F[Output[DDLInfo]]
 
   /**
    * Execution for SHOW STREAMS command
    *
    * @return information about KSQL streams
    */
-  def getStreams: F[Either[ClientError, StreamResponse]]
+  def getStreams: F[Output[StreamResponse]]
 
   /**
    * Execution for SHOW TABLES command
    *
    * @return information about KSQL tables
    */
-  def getTables: F[Either[ClientError, TableResponse]]
+  def getTables: F[Output[TableResponse]]
 
   /**
    * Execution for SHOW QUERIES command
    *
    * @return information about KSQL queries
    */
-  def getQueries: F[Either[ClientError, QueryResponse]]
+  def getQueries: F[Output[QueryResponse]]
 
 }
