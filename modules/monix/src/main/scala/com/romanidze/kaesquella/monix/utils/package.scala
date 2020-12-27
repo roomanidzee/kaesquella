@@ -43,28 +43,25 @@ package object utils {
       val observableBody: Observable[ByteBuffer] = body.toOption.get
       val lineTerm = Array('\n'.toByte)
 
-      val readResult: Observable[Either[ClientError, RowInfo]] = observableBody
-        .map(elem => {
+      val readResult: Observable[Either[ClientError, RowInfo]] = observableBody.map { elem =>
+        val byteArr: Array[Byte] = new Array[Byte](elem.remaining())
+        elem.get(byteArr)
+        elem.rewind()
 
-          val byteArr: Array[Byte] = new Array[Byte](elem.remaining())
-          elem.get(byteArr)
-          elem.rewind()
+        byteArr
 
-          byteArr
-
-        })
+      }
         .pipeThrough(Framing(lineTerm, 200))
         .pipeThrough(utf8Decode)
         .map(elem => elem.jsonAs[RowInfo])
-        .map(elem => {
-
+        .map { elem =>
           if (elem.isLeft) {
             Left(ClientError(errorMessage, None, Some(elem.swap.toOption.get.getMessage)))
           } else {
             Right(elem.toOption.get)
           }
 
-        })
+        }
 
       Right(readResult)
 

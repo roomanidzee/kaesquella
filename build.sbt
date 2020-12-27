@@ -1,5 +1,3 @@
-import Dependencies._
-
 val projectVersion = "0.0.1"
 val scalaProjectVersion = "2.13.2"
 
@@ -8,25 +6,17 @@ lazy val commonSettings = Seq(
   scalaVersion := scalaProjectVersion,
   resolvers ++= Seq(
       Resolver.mavenCentral,
-      Resolver.mavenLocal,
-      Resolver.bintrayRepo("sbt-native-packager", "maven"),
-      Resolver.bintrayRepo("sbt-assembly", "maven")
+      Resolver.mavenLocal
   ),
   scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8"),
-  testOptions in Test ++= Seq(
-      Tests.Argument(TestFrameworks.ScalaTest, "-oT"),
-      Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports")
-  ),
   scalafmtOnCompile := true,
-  sonarProperties := Sonar.properties,
-  coverageFailOnMinimum := true
+  sonarProperties := Sonar.properties
 )
 
 lazy val kaesquella = (project in file("."))
   .settings(commonSettings)
   .settings(
     name := "kaesquella",
-    assemblyJarName in assembly := s"kaesquella-${version.value}.jar",
   )
   .aggregate(core, monix)
   .dependsOn(core, monix)

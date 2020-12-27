@@ -7,9 +7,6 @@ object Dependencies {
     "org.scalactic" %% "scalactic" % Versions.scalaTest
   ).map(_ % Test)
 
-  private val flexmark: Seq[ModuleID] =
-    Seq("com.vladsch.flexmark" % "flexmark-all" % Versions.flexMark).map(_ % Test)
-
   private val wiremock: Seq[ModuleID] =
     Seq("com.github.tomakehurst" % "wiremock" % Versions.wiremock).map(_ % Test)
 
@@ -25,7 +22,7 @@ object Dependencies {
   )
 
   private val monix: Seq[ModuleID] = Seq(
-    "com.softwaremill.sttp.client" %% "async-http-client-backend-monix" % Versions.sttp
+    "com.softwaremill.sttp.client" %% "okhttp-backend-monix" % Versions.sttp
   ).union(sttp)
 
   private val logging: Seq[ModuleID] = Seq(
@@ -38,7 +35,7 @@ object Dependencies {
 
   val coreDeps : Seq[ModuleID] = tethys.union(sttp)
 
-  val testDeps: Seq[ModuleID] = scalaTest.union(flexmark).union(wiremock)
+  val testDeps: Seq[ModuleID] = scalaTest.union(wiremock)
 
   val monixDeps: Seq[ModuleID] = tethys.union(monix).union(logging)
 

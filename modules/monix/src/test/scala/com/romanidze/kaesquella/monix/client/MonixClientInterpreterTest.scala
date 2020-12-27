@@ -100,14 +100,13 @@ class MonixClientInterpreterTest
 
       implicit val format: DefaultFormats = DefaultFormats
 
-      resultList.foreach(elem => {
-
+      resultList.foreach { elem =>
         elem should be(Symbol("right"))
         val values: JsonAST.JArray = elem.toOption.get.row.columns
 
         values.arr(0).extract[Long] shouldBe 1524760769983L
 
-      })
+      }
 
     }
 

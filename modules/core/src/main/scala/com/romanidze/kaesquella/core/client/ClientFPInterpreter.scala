@@ -22,21 +22,23 @@ abstract class ClientFPInterpreter[F[_], G[_], WSBackend[_]](baseURL: String) {
     val request: SimpleRequest = basicRequest
       .header("Accept", ksqlHeader)
       .header("Content-Type", ksqlHeader)
-      .get(uri"${requestURL}")
+      .get(uri"$requestURL")
 
     request.send()
 
   }
 
-  def sendPOSTRequest(requestURL: String, inputBody: String): SimpleResponse = {
+  def sendPOSTRequest(requestURL: String, inputBody: Option[String]): SimpleResponse = {
 
     val request: SimpleRequest = basicRequest
       .header("Accept", ksqlHeader)
       .header("Content-Type", ksqlHeader)
-      .post(uri"${requestURL}")
-      .body(inputBody)
+      .post(uri"$requestURL")
 
-    request.send()
+    inputBody match {
+      case Some(value) => request.body(value).send()
+      case None        => request.send()
+    }
 
   }
 
@@ -45,7 +47,7 @@ abstract class ClientFPInterpreter[F[_], G[_], WSBackend[_]](baseURL: String) {
     val request: StreamingRequest = basicRequest
       .header("Accept", ksqlHeader)
       .header("Content-Type", ksqlHeader)
-      .post(uri"${requestURL}")
+      .post(uri"$requestURL")
       .body(inputBody)
       .response(asStream[G[ByteBuffer]])
       .readTimeout(Duration.Inf)
