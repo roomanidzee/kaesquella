@@ -2,7 +2,6 @@ package com.romanidze.kaesquella.core.models.query
 
 import tethys._
 import tethys.jackson._
-import tethys.json4s._
 
 import org.json4s.JsonAST._
 import org.json4s.DefaultFormats
@@ -15,7 +14,6 @@ import scala.io.BufferedSource
 import tethys.readers.ReaderError
 import org.scalatest.EitherValues
 
-import com.romanidze.kaesquella.core.models.query._
 import com.romanidze.kaesquella.core.models.query.row.Data
 import com.romanidze.kaesquella.core.models.query.row.RowInfo
 

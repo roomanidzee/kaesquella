@@ -8,6 +8,7 @@ import com.romanidze.kaesquella.core.models.{ClientError, KSQLVersionResponse, S
 import com.romanidze.kaesquella.core.models.ksql.{Request => KSQLInfoRequest}
 import com.romanidze.kaesquella.core.models.query.row.RowInfo
 import com.romanidze.kaesquella.core.models.query.{Request => KSQLQueryRequest}
+import com.romanidze.kaesquella.core.models.terminate.TopicsForTerminate
 import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import monix.reactive.Observable
@@ -107,6 +108,21 @@ class MonixClientInterpreterTest
         values.arr(0).extract[Long] shouldBe 1524760769983L
 
       }
+
+    }
+
+    "terminate cluster" in {
+
+      val request: Option[TopicsForTerminate] = Some(TopicsForTerminate(List("FOO", "bar.*")))
+
+      val responseTask: Task[Output[StatusInfo]] = client.terminateCluster(request)
+      val responseEither: Output[StatusInfo] = responseTask.runSyncUnsafe()
+
+      responseEither should be(Symbol("right"))
+
+      val terminateResult = responseEither.toOption.get
+
+      terminateResult.status shouldBe "200"
 
     }
 

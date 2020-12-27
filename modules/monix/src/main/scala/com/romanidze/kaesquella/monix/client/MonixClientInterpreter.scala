@@ -6,13 +6,16 @@ import sttp.client.okhttp.monix._
 import sttp.client.okhttp.WebSocketHandler
 import com.romanidze.kaesquella.core.client.{ClientFPInterpreter, ClientInterpreter}
 import com.romanidze.kaesquella.core.client.Output
+import com.romanidze.kaesquella.core.models.debug.describe.DescribeResult
+import com.romanidze.kaesquella.core.models.debug.explain.ExplainResult
 import com.romanidze.kaesquella.core.models.ksql.{Request => KSQLInfoRequest}
 import com.romanidze.kaesquella.core.models.ksql.ddl.DDLInfo
 import com.romanidze.kaesquella.core.models.ksql.query.QueryResponse
 import com.romanidze.kaesquella.core.models.ksql.stream.StreamResponse
-import com.romanidze.kaesquella.core.models.{processBody, KSQLVersionResponse, StatusInfo}
+import com.romanidze.kaesquella.core.models.{processBody, processLeft, ExecutionError, KSQLVersionResponse, StatusInfo}
 import com.romanidze.kaesquella.core.models.ksql.table.TableResponse
 import com.romanidze.kaesquella.core.models.query.{Request => KSQLQueryRequest}
+import com.romanidze.kaesquella.core.models.terminate.TopicsForTerminate
 import com.romanidze.kaesquella.monix.utils.processRowInfo
 import monix.eval.Task
 import monix.reactive.Observable
@@ -46,7 +49,7 @@ class MonixClientInterpreter(baseURL: String, httpClient: OkHttpClient)
   /**
    * Method for retrieving results of select request
    *
-   * @param request request instance with query and properties
+   * @param inputRequest request instance with query and properties
    * @return row information with data
    */
   override def runQueryRequest(inputRequest: KSQLQueryRequest): RowInfoResponse =
@@ -104,4 +107,60 @@ class MonixClientInterpreter(baseURL: String, httpClient: OkHttpClient)
       .map(elem => processBody[QueryResponse](elem.body))
 
   }
+
+  /**
+   * Describe the KTable or KStream
+   *
+   * @param sourceName name of a table or stream
+   * @param isExtended should the response be extended or not
+   * @return result of describe query
+   */
+  override def describeSource(
+    sourceName: String,
+    isExtended: Boolean
+  ): Task[Output[DescribeResult]] = {
+
+    val query: String = isExtended match {
+      case true  => s"DESCRIBE EXTENDED ${sourceName};"
+      case false => s"DESCRIBE ${sourceName}"
+    }
+
+    val request: KSQLInfoRequest = KSQLInfoRequest(query, Map.empty[String, String])
+
+    sendPOSTRequest(s"$baseURL/ksql", Some(request.asJson))
+      .map(elem => processBody[DescribeResult](elem.body))
+
+  }
+
+  /**
+   * Explain the input KSQL query
+   *
+   * @param queryID KSQL query ID for "EXPLAIN" operation
+   * @return result of explain query
+   */
+  override def explainQuery(queryID: String): Task[Output[ExplainResult]] = {
+
+    val request: KSQLInfoRequest = KSQLInfoRequest(s"EXPLAIN ${queryID}", Map.empty[String, String])
+
+    sendPOSTRequest(s"$baseURL/ksql", Some(request.asJson))
+      .map(elem => processBody[ExplainResult](elem.body))
+
+  }
+
+  /**
+   * Method for terminating the KSQLDB cluster
+   *
+   * @param topicsForTerminate optional topics list to delete (WARNING: only generated topics for queries will be deleted, other will not)
+   * @return status about termination
+   */
+  override def terminateCluster(
+    topicsForTerminate: Option[TopicsForTerminate]
+  ): Task[Output[StatusInfo]] =
+    sendPOSTRequest(s"$baseURL/ksql/terminate", topicsForTerminate.map(_.asJson)).map(elem =>
+      elem.body match {
+        case Left(value) => processLeft[ExecutionError](value)
+        case Right(_)    => Right(StatusInfo("200", "Cluster terminated successfully"))
+      }
+    )
+
 }

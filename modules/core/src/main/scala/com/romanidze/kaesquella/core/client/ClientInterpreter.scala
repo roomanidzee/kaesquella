@@ -1,5 +1,7 @@
 package com.romanidze.kaesquella.core.client
 
+import com.romanidze.kaesquella.core.models.debug.describe.DescribeResult
+import com.romanidze.kaesquella.core.models.debug.explain.ExplainResult
 import com.romanidze.kaesquella.core.models.{ClientError, KSQLVersionResponse, StatusInfo}
 import com.romanidze.kaesquella.core.models.ksql.{Request => KSQLInfoRequest}
 import com.romanidze.kaesquella.core.models.query.{Request => KSQLQueryRequest}
@@ -8,6 +10,7 @@ import com.romanidze.kaesquella.core.models.ksql.ddl.DDLInfo
 import com.romanidze.kaesquella.core.models.ksql.stream.StreamResponse
 import com.romanidze.kaesquella.core.models.ksql.table.TableResponse
 import com.romanidze.kaesquella.core.models.ksql.query.QueryResponse
+import com.romanidze.kaesquella.core.models.terminate.TopicsForTerminate
 
 /**
  * Trait for describing common client operations. May be changed!
@@ -68,5 +71,27 @@ trait ClientInterpreter[F[_], G[_]] {
    * @return information about KSQL queries
    */
   def getQueries: F[Output[QueryResponse]]
+
+  /**
+   * Describe the KTable or KStream
+   * @param sourceName name of a table or stream
+   * @param isExtended should the response be extended or not
+   * @return result of describe query
+   */
+  def describeSource(sourceName: String, isExtended: Boolean): F[Output[DescribeResult]]
+
+  /**
+   * Explain the input KSQL query
+   * @param queryID KSQL query ID for "EXPLAIN" operation
+   * @return result of explain query
+   */
+  def explainQuery(queryID: String): F[Output[ExplainResult]]
+
+  /**
+   * Method for terminating the KSQLDB cluster
+   * @param topicsForTerminate optional topics list to delete (WARNING: only generated topics for queries will be deleted, other will not)
+   * @return status about termination
+   */
+  def terminateCluster(topicsForTerminate: Option[TopicsForTerminate]): F[Output[StatusInfo]]
 
 }

@@ -1,6 +1,5 @@
 package com.romanidze.kaesquella.core
 
-import com.romanidze.kaesquella.core.models.ksql.Request
 import tethys._
 import tethys.jackson._
 import tethys.JsonReader
@@ -8,7 +7,9 @@ import tethys.readers.ReaderError
 
 package object models {
 
-  private def processLeft[A: JsonReader](body: String, errorMessage: String) = {
+  val errorMessage = "Error while processing response body"
+
+  def processLeft[A: JsonReader](body: String): Left[ClientError, Nothing] = {
 
     val errorBody: Either[ReaderError, ExecutionError] = body.jsonAs[ExecutionError]
 
@@ -20,7 +21,7 @@ package object models {
 
   }
 
-  private def processRight[A: JsonReader](body: String, errorMessage: String) = {
+  def processRight[A: JsonReader](body: String): Right[Nothing, A] = {
 
     val queryStatus: Either[ReaderError, A] = body.jsonAs[A]
 
@@ -34,11 +35,9 @@ package object models {
 
   def processBody[A: JsonReader](body: Either[String, String]): Either[ClientError, A] = {
 
-    val errorMessage = "Error while processing response body"
-
     body match {
-      case Left(value)  => processLeft(value, errorMessage)
-      case Right(value) => processRight(value, errorMessage)
+      case Left(value)  => processLeft(value)
+      case Right(value) => processRight(value)
     }
 
   }
