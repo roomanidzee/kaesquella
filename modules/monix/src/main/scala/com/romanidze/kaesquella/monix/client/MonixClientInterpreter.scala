@@ -15,12 +15,15 @@ import com.romanidze.kaesquella.core.models.ksql.stream.StreamResponse
 import com.romanidze.kaesquella.core.models.{processBody, processLeft, ExecutionError, KSQLVersionResponse, StatusInfo}
 import com.romanidze.kaesquella.core.models.ksql.table.TableResponse
 import com.romanidze.kaesquella.core.models.pull.{PullRequest, PullResponse}
+import com.romanidze.kaesquella.core.models.push.{PushResponse, TargetForPush}
 import com.romanidze.kaesquella.core.models.query.{Request => KSQLQueryRequest}
 import com.romanidze.kaesquella.core.models.terminate.TopicsForTerminate
-import com.romanidze.kaesquella.monix.utils.{processPullQuery, processRowInfo}
+import com.romanidze.kaesquella.monix.utils.{processPullQuery, processPushQuery, processRowInfo}
 import monix.eval.Task
 import monix.reactive.Observable
 import okhttp3.OkHttpClient
+import org.json4s._
+import org.json4s.jackson.JsonMethods._
 
 class MonixClientInterpreter(baseURL: String, httpClient: OkHttpClient)
     extends ClientFPInterpreter[Task, Observable, WebSocketHandler](baseURL)
@@ -176,6 +179,26 @@ class MonixClientInterpreter(baseURL: String, httpClient: OkHttpClient)
 
     sendStreamRequest(s"$baseURL/query-stream", request.asJson, isPullQuery = true)
       .map(elem => processPullQuery(elem.body))
+
+  }
+
+  /**
+   * Method for running the KSQL push request
+   *
+   * @param request stream for data inserting
+   * @param values  data for insert
+   * @return push response - information for each data value,is it inserted or not
+   */
+  override def runPushRequest(
+    request: TargetForPush,
+    values: List[JsonAST.JObject]
+  ): Task[Output[Observable[Output[PushResponse]]]] = {
+
+    val valuesCompacted: String = values.map(elem => compact(elem)).mkString("\n")
+    val requestBody = s"${request.asJson}\n${valuesCompacted}"
+
+    sendStreamRequest(s"$baseURL/inserts-stream", requestBody)
+      .map(elem => processPushQuery(elem.body))
 
   }
 }

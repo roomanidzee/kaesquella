@@ -7,6 +7,7 @@ import com.romanidze.kaesquella.core.client.Output
 import com.romanidze.kaesquella.core.models.{ClientError, KSQLVersionResponse, StatusInfo}
 import com.romanidze.kaesquella.core.models.ksql.{Request => KSQLInfoRequest}
 import com.romanidze.kaesquella.core.models.pull.{PullRequest, PullResponse}
+import com.romanidze.kaesquella.core.models.push.{PushResponse, TargetForPush}
 import com.romanidze.kaesquella.core.models.query.row.RowInfo
 import com.romanidze.kaesquella.core.models.query.{Request => KSQLQueryRequest}
 import com.romanidze.kaesquella.core.models.terminate.TopicsForTerminate
@@ -14,7 +15,7 @@ import monix.eval.Task
 import monix.execution.Scheduler.Implicits.global
 import monix.reactive.Observable
 import org.json4s.JsonAST.JArray
-import org.json4s.{DefaultFormats, JsonAST}
+import org.json4s.{DefaultFormats, JDouble, JField, JInt, JObject, JString, JsonAST}
 import org.scalatest.{BeforeAndAfterAll, EitherValues}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -161,6 +162,33 @@ class MonixClientInterpreterTest
       dataArray.arr(0).extract[Int] shouldBe 123
       dataArray.arr(1).extract[String] shouldBe "blah"
       dataArray.arr(2).extract[Boolean] shouldBe true
+
+    }
+
+    "run push query" in {
+
+      val targetSink = TargetForPush("test")
+      val values = JObject(
+        JField("test", JInt(1)),
+        JField("test1", JString("1")),
+        JField("test2", JDouble(1.0)),
+        JField("test3", JInt(5))
+      )
+
+      val responseTask: Task[Output[Observable[Output[PushResponse]]]] =
+        client.runPushRequest(targetSink, List(values))
+      val responseEither = responseTask.runSyncUnsafe()
+
+      responseEither should be(Symbol("right"))
+
+      val dataList: Task[List[Output[PushResponse]]] = responseEither.toOption.get.toListL
+      val resultList: List[Output[PushResponse]] = dataList.runSyncUnsafe()
+
+      resultList.foreach(elem => elem.isRight)
+
+      val finalList: List[PushResponse] = resultList.map(elem => elem.toOption.get)
+
+      finalList.foreach(elem => elem.status shouldBe "ok")
 
     }
 

@@ -15,8 +15,8 @@ abstract class ClientFPInterpreter[F[_], G[_], WSBackend[_]](baseURL: String) {
   type StreamingRequest = RequestT[Identity, Either[String, G[ByteBuffer]], G[ByteBuffer]]
   type StreamingResponse = F[Response[Either[String, G[ByteBuffer]]]]
 
-  val ksqlSimpleHeader: String = "application/vnd.ksql.v1+json"
-  val ksqlPullQueryHeader: String = "application/vnd.ksqlapi.delimited.v1"
+  private val ksqlSimpleHeader: String = "application/vnd.ksql.v1+json"
+  private val ksqlPullQueryHeader: String = "application/vnd.ksqlapi.delimited.v1"
 
   def sendGETRequest(requestURL: String): SimpleResponse = {
 

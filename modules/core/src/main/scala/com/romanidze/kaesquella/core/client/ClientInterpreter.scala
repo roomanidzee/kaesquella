@@ -2,7 +2,7 @@ package com.romanidze.kaesquella.core.client
 
 import com.romanidze.kaesquella.core.models.debug.describe.DescribeResult
 import com.romanidze.kaesquella.core.models.debug.explain.ExplainResult
-import com.romanidze.kaesquella.core.models.{ClientError, KSQLVersionResponse, StatusInfo}
+import com.romanidze.kaesquella.core.models.{KSQLVersionResponse, StatusInfo}
 import com.romanidze.kaesquella.core.models.ksql.{Request => KSQLInfoRequest}
 import com.romanidze.kaesquella.core.models.query.{Request => KSQLQueryRequest}
 import com.romanidze.kaesquella.core.models.query.row.RowInfo
@@ -11,7 +11,9 @@ import com.romanidze.kaesquella.core.models.ksql.stream.StreamResponse
 import com.romanidze.kaesquella.core.models.ksql.table.TableResponse
 import com.romanidze.kaesquella.core.models.ksql.query.QueryResponse
 import com.romanidze.kaesquella.core.models.pull.{PullRequest, PullResponse}
+import com.romanidze.kaesquella.core.models.push.{PushResponse, TargetForPush}
 import com.romanidze.kaesquella.core.models.terminate.TopicsForTerminate
+import org.json4s.JsonAST.JObject
 
 /**
  * Trait for describing common client operations. May be changed!
@@ -101,5 +103,16 @@ trait ClientInterpreter[F[_], G[_]] {
    * @return pull response - header or data
    */
   def runPullRequest(request: PullRequest): F[Output[G[Output[PullResponse]]]]
+
+  /**
+   * Method for running the KSQL push request
+   * @param request stream for data inserting
+   * @param values data for insert
+   * @return push response - information for each data value,is it inserted or not
+   */
+  def runPushRequest(
+    request: TargetForPush,
+    values: List[JObject]
+  ): F[Output[G[Output[PushResponse]]]]
 
 }

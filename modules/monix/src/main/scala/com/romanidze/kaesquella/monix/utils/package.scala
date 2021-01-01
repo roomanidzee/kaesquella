@@ -3,6 +3,7 @@ package com.romanidze.kaesquella.monix
 import java.nio.ByteBuffer
 
 import com.romanidze.kaesquella.core.models.pull.{convert, PullResponse}
+import com.romanidze.kaesquella.core.models.push.PushResponse
 import com.romanidze.kaesquella.core.models.{ClientError, ExecutionError}
 import com.romanidze.kaesquella.core.models.query.row.RowInfo
 import monix.execution.atomic.AtomicAny
@@ -95,6 +96,37 @@ package object utils {
         val readResult =
           prepareObservable(value)
             .map(elem => convert(elem))
+
+        Right(readResult)
+
+      }
+
+    }
+
+  }
+
+  def processPushQuery(
+    body: Either[String, Observable[ByteBuffer]]
+  ): Either[ClientError, Observable[Either[ClientError, PushResponse]]] = {
+
+    val errorMessage = "Error while processing response body for push query result"
+
+    body match {
+
+      case Left(value) => processLeft(value)
+      case Right(value) => {
+
+        val readResult =
+          prepareObservable(value)
+            .map(elem => elem.jsonAs[PushResponse])
+            .map { elem =>
+              if (elem.isLeft) {
+                Left(ClientError(errorMessage, None, Some(elem.swap.toOption.get.getMessage)))
+              } else {
+                Right(elem.toOption.get)
+              }
+
+            }
 
         Right(readResult)
 
