@@ -1,14 +1,9 @@
 package com.romanidze.kaesquella.core.models.ksql.query
 
 import com.romanidze.kaesquella.core.models.ValidationUtils
-import tethys._
-import tethys.jackson._
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
-import scala.io.Source
-import scala.io.BufferedSource
-import tethys.readers.ReaderError
 import org.scalatest.EitherValues
 
 class QueryResponseTest extends AnyWordSpec with Matchers with EitherValues {

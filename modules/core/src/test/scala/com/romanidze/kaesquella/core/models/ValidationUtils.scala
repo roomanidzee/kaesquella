@@ -11,6 +11,16 @@ import scala.io.{BufferedSource, Source}
 
 object ValidationUtils extends Matchers {
 
+  def getJSONData(filePath: String): String = {
+
+    val fileData: BufferedSource = Source.fromResource(filePath)
+    val fileString: String = fileData.mkString
+    fileData.close()
+
+    fileString
+
+  }
+
   def validateEncode[A: JsonWriter](obj: A, jsonString: String): Assertion = {
 
     val resultString: String = obj.asJson
@@ -21,9 +31,7 @@ object ValidationUtils extends Matchers {
 
   def validateDecode[A: JsonReader](expectedObj: A, filePath: String): Assertion = {
 
-    val fileData: BufferedSource = Source.fromResource(filePath)
-    val fileString: String = fileData.mkString
-    fileData.close()
+    val fileString: String = getJSONData(filePath)
 
     val fileObj: Either[ReaderError, A] = fileString.jsonAs[A]
 
