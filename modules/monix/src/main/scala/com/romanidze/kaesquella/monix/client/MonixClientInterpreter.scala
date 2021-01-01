@@ -14,9 +14,10 @@ import com.romanidze.kaesquella.core.models.ksql.query.QueryResponse
 import com.romanidze.kaesquella.core.models.ksql.stream.StreamResponse
 import com.romanidze.kaesquella.core.models.{processBody, processLeft, ExecutionError, KSQLVersionResponse, StatusInfo}
 import com.romanidze.kaesquella.core.models.ksql.table.TableResponse
+import com.romanidze.kaesquella.core.models.pull.{PullRequest, PullResponse}
 import com.romanidze.kaesquella.core.models.query.{Request => KSQLQueryRequest}
 import com.romanidze.kaesquella.core.models.terminate.TopicsForTerminate
-import com.romanidze.kaesquella.monix.utils.processRowInfo
+import com.romanidze.kaesquella.monix.utils.{processPullQuery, processRowInfo}
 import monix.eval.Task
 import monix.reactive.Observable
 import okhttp3.OkHttpClient
@@ -163,4 +164,18 @@ class MonixClientInterpreter(baseURL: String, httpClient: OkHttpClient)
       }
     )
 
+  /**
+   * Method for running the KSQL pull request
+   *
+   * @param request request parameters
+   * @return pull response - header or data
+   */
+  override def runPullRequest(
+    request: PullRequest
+  ): Task[Output[Observable[Output[PullResponse]]]] = {
+
+    sendStreamRequest(s"$baseURL/query-stream", request.asJson, isPullQuery = true)
+      .map(elem => processPullQuery(elem.body))
+
+  }
 }

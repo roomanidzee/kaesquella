@@ -14,7 +14,8 @@ object Dependencies {
     "com.tethys-json" %% "tethys-core" % Versions.tethys,
     "com.tethys-json" %% "tethys-jackson" % Versions.tethys,
     "com.tethys-json" %% "tethys-derivation" % Versions.tethys,
-    "com.tethys-json" %% "tethys-json4s" % Versions.tethys
+    "com.tethys-json" %% "tethys-json4s" % Versions.tethys,
+    "org.json4s" %% "json4s-jackson" % Versions.json4s
   )
 
   private val sttp: Seq[ModuleID] = Seq(

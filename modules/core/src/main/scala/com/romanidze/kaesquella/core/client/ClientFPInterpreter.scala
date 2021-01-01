@@ -15,13 +15,14 @@ abstract class ClientFPInterpreter[F[_], G[_], WSBackend[_]](baseURL: String) {
   type StreamingRequest = RequestT[Identity, Either[String, G[ByteBuffer]], G[ByteBuffer]]
   type StreamingResponse = F[Response[Either[String, G[ByteBuffer]]]]
 
-  val ksqlHeader: String = "application/vnd.ksql.v1+json"
+  val ksqlSimpleHeader: String = "application/vnd.ksql.v1+json"
+  val ksqlPullQueryHeader: String = "application/vnd.ksqlapi.delimited.v1"
 
   def sendGETRequest(requestURL: String): SimpleResponse = {
 
     val request: SimpleRequest = basicRequest
-      .header("Accept", ksqlHeader)
-      .header("Content-Type", ksqlHeader)
+      .header("Accept", ksqlSimpleHeader)
+      .header("Content-Type", ksqlSimpleHeader)
       .get(uri"$requestURL")
 
     request.send()
@@ -31,8 +32,8 @@ abstract class ClientFPInterpreter[F[_], G[_], WSBackend[_]](baseURL: String) {
   def sendPOSTRequest(requestURL: String, inputBody: Option[String]): SimpleResponse = {
 
     val request: SimpleRequest = basicRequest
-      .header("Accept", ksqlHeader)
-      .header("Content-Type", ksqlHeader)
+      .header("Accept", ksqlSimpleHeader)
+      .header("Content-Type", ksqlSimpleHeader)
       .post(uri"$requestURL")
 
     inputBody match {
@@ -42,7 +43,16 @@ abstract class ClientFPInterpreter[F[_], G[_], WSBackend[_]](baseURL: String) {
 
   }
 
-  def sendStreamRequest(requestURL: String, inputBody: String): StreamingResponse = {
+  def sendStreamRequest(
+    requestURL: String,
+    inputBody: String,
+    isPullQuery: Boolean = false
+  ): StreamingResponse = {
+
+    val ksqlHeader: String = isPullQuery match {
+      case false => ksqlSimpleHeader
+      case true  => ksqlPullQueryHeader
+    }
 
     val request: StreamingRequest = basicRequest
       .header("Accept", ksqlHeader)

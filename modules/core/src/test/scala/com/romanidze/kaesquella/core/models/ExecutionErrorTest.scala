@@ -3,9 +3,7 @@ package com.romanidze.kaesquella.core.models
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
-import org.scalatest.EitherValues
-
-class ExecutionErrorTest extends AnyWordSpec with Matchers with EitherValues {
+class ExecutionErrorTest extends AnyWordSpec with Matchers {
 
   "ExecutionError" should {
 

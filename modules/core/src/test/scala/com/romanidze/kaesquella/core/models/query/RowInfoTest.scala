@@ -52,7 +52,7 @@ class RowInfoTest extends AnyWordSpec with Matchers with EitherValues {
 
       val values: JArray = resultObj.row.columns
 
-      implicit val format = DefaultFormats
+      implicit val format: DefaultFormats = DefaultFormats
 
       values.arr(0).extract[Long] shouldBe 1524760769983L
       values.arr(1).extract[String] shouldBe "1"

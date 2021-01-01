@@ -10,6 +10,7 @@ import com.romanidze.kaesquella.core.models.ksql.ddl.DDLInfo
 import com.romanidze.kaesquella.core.models.ksql.stream.StreamResponse
 import com.romanidze.kaesquella.core.models.ksql.table.TableResponse
 import com.romanidze.kaesquella.core.models.ksql.query.QueryResponse
+import com.romanidze.kaesquella.core.models.pull.{PullRequest, PullResponse}
 import com.romanidze.kaesquella.core.models.terminate.TopicsForTerminate
 
 /**
@@ -93,5 +94,12 @@ trait ClientInterpreter[F[_], G[_]] {
    * @return status about termination
    */
   def terminateCluster(topicsForTerminate: Option[TopicsForTerminate]): F[Output[StatusInfo]]
+
+  /**
+   * Method for running the KSQL pull request
+   * @param request request parameters
+   * @return pull response - header or data
+   */
+  def runPullRequest(request: PullRequest): F[Output[G[Output[PullResponse]]]]
 
 }

@@ -13,23 +13,21 @@ package object models {
 
     val errorBody: Either[ReaderError, ExecutionError] = body.jsonAs[ExecutionError]
 
-    if (errorBody.isLeft) {
-      Left(ClientError(errorMessage, None, Some(errorBody.swap.toOption.get.getMessage)))
+    errorBody match {
+      case Left(value)  => Left(ClientError(errorMessage, None, Some(value.getMessage)))
+      case Right(value) => Left(ClientError(errorMessage, Some(value), None))
     }
-
-    Left(ClientError(errorMessage, Some(errorBody.toOption.get), None))
 
   }
 
-  def processRight[A: JsonReader](body: String): Right[Nothing, A] = {
+  def processRight[A: JsonReader](body: String): Either[ClientError, A] = {
 
     val queryStatus: Either[ReaderError, A] = body.jsonAs[A]
 
-    if (queryStatus.isLeft) {
-      Left(ClientError(errorMessage, None, Some(queryStatus.swap.toOption.get.getMessage)))
+    queryStatus match {
+      case Left(value)  => Left(ClientError(errorMessage, None, Some(value.getMessage)))
+      case Right(value) => Right(value)
     }
-
-    Right(queryStatus.toOption.get)
 
   }
 
