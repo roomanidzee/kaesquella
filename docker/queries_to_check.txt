@@ -1,0 +1,10 @@
+CREATE STREAM pageviews (viewtime BIGINT, userid VARCHAR, pageid VARCHAR)
+WITH (KAFKA_TOPIC='pageviews', VALUE_FORMAT='AVRO');
+
+CREATE TABLE users (registertime BIGINT, gender VARCHAR, regionid VARCHAR, userid VARCHAR PRIMARY KEY) WITH (KAFKA_TOPIC='users', VALUE_FORMAT='AVRO');
+
+CREATE STREAM pageviews_female AS SELECT users.userid AS userid, pageid, regionid, gender
+FROM pageviews LEFT JOIN users ON pageviews.userid = users.userid
+WHERE gender = 'FEMALE';
+
+SELECT * FROM pageviews_female EMIT CHANGES LIMIT 10
